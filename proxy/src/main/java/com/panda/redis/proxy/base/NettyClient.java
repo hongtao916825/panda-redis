@@ -1,4 +1,4 @@
-package netty.base;
+package com.panda.redis.proxy.base;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;

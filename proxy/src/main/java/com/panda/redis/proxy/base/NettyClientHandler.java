@@ -1,4 +1,4 @@
-package netty.base;
+package com.panda.redis.proxy.base;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

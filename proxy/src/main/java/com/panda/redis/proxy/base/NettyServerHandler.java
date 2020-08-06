@@ -1,6 +1,6 @@
-package netty.base;
+package com.panda.redis.proxy.base;
 
-import api.Client;
+import com.panda.redis.base.api.Client;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,6 +15,18 @@ import java.util.concurrent.Future;
  * 自定义Handler需要继承netty规定好的某个HandlerAdapter(规范)
  */
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
+
+    private String ip;
+
+    private int port;
+
+    public NettyServerHandler() {
+    }
+
+    public NettyServerHandler(String ip, int port) {
+        this.ip = ip;
+        this.port = port;
+    }
 
     private static ExecutorService executor
             = Executors.newSingleThreadExecutor();
@@ -37,7 +49,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 //        byte[] req = new byte[buf.readableBytes()];
 //        buf.readBytes(req);
         System.out.println("客户端发送消息是:" + req);
-        Client jedis = new Client("47.97.215.217",6061);
+        Client jedis = new Client(ip,port);
         Future<String> future = executor.submit(() -> {
             return jedis.send(req.getBytes());
         });
