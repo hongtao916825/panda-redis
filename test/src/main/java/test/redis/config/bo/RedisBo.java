@@ -61,6 +61,7 @@ public class RedisBo {
 
     private LettucePool createPoolConfig(){
         DefaultLettucePool lettucePool = new DefaultLettucePool();
+//        lettucePool.setHostName("47.97.215.217");
         lettucePool.setHostName("127.0.0.1");
         lettucePool.setPort(6061);
         lettucePool.afterPropertiesSet();
