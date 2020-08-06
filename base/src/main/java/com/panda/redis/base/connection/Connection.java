@@ -1,4 +1,4 @@
-package connection;/* ━━━━━━如来保佑━━━━━━
+package com.panda.redis.base.connection;/* ━━━━━━如来保佑━━━━━━
  * 　　　┏┓　　　┏┓
  * 　　┏┛┻━━━┛┻┓
  * 　　┃　　　━　　　┃
@@ -17,7 +17,7 @@ package connection;/* ━━━━━━如来保佑━━━━━━
  */
 
 
-import protocol.Protocol;
+import com.panda.redis.base.protocol.Protocol;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -89,4 +89,14 @@ public class Connection {
 
       return new String(b);
    }
+
+    public InputStream getInputStreamReply() {
+        try {
+            return socket.getInputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
 }

@@ -1,4 +1,4 @@
-package api;/* ━━━━━━如来保佑━━━━━━
+package com.panda.redis.base.api;/* ━━━━━━如来保佑━━━━━━
  * 　　　┏┓　　　┏┓
  * 　　┏┛┻━━━┛┻┓
  * 　　┃　　　━　　　┃
@@ -17,8 +17,8 @@ package api;/* ━━━━━━如来保佑━━━━━━
  */
 
 
-import connection.Connection;
-import protocol.Protocol;
+import com.panda.redis.base.connection.Connection;
+import com.panda.redis.base.protocol.Protocol;
 
 /***
  * 就是给程序员提供API接口的
@@ -50,7 +50,6 @@ public class Client {
       connection.sendCommand(b);//TODO 发送数据
       return  connection.getStatusReply();
    }
-
 
    /**
     * Get the value of the specified key. If the key does not exist null is returned. If the value
