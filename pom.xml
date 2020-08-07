@@ -17,6 +17,7 @@
     <properties>
         <spring-framework.version>5.2.4.RELEASE</spring-framework.version>
         <lettuce.version>5.2.2.RELEASE</lettuce.version>
+        <java.version>1.8</java.version>
     </properties>
 
     <dependencies>
@@ -49,12 +50,6 @@
             <artifactId>spring-data-redis</artifactId>
             <version>2.2.5.RELEASE</version>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -79,4 +74,17 @@
 
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

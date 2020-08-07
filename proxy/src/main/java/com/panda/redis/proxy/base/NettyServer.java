@@ -1,5 +1,6 @@
 package com.panda.redis.proxy.base;
 
+import com.panda.redis.proxy.config.ProxyProperties;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -8,10 +9,18 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
+@Service
 public class NettyServer {
 
-    public static void main(String[] args) throws Exception {
+    @Autowired
+    private ProxyProperties proxyProperties;
+
+
+    public void start(){
         //创建两个线程组bossGroup和workerGroup, 含有的子线程NioEventLoop的个数默认为cpu核数的两倍
         // bossGroup只是处理连接请求 ,真正的和客户端业务处理，会交给workerGroup完成
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
@@ -36,21 +45,13 @@ public class NettyServer {
             System.out.println("netty server start。。");
             //绑定一个端口并且同步, 生成了一个ChannelFuture异步对象，通过isDone()等方法可以判断异步事件的执行情况
             //启动服务器(并绑定端口)，bind是异步操作，sync方法是等待异步操作执行完毕
-            ChannelFuture cf = bootstrap.bind(Integer.valueOf(args[0])).sync();
+            ChannelFuture cf = bootstrap.bind(proxyProperties.getBindPort()).sync();
             //给cf注册监听器，监听我们关心的事件
-            /*cf.addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    if (cf.isSuccess()) {
-                        System.out.println("监听端口9000成功");
-                    } else {
-                        System.out.println("监听端口9000失败");
-                    }
-                }
-            });*/
             //对通道关闭进行监听，closeFuture是异步操作，监听通道关闭
             // 通过sync方法同步等待通道关闭处理完毕，这里会阻塞等待通道关闭完成
             cf.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
