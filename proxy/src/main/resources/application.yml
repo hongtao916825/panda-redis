@@ -1,0 +1,13 @@
+#sentinel cluster single
+redis:
+  cluster: single
+  #redis节点id
+  nodes: 47.97.215.217:6063
+#redis.database=0
+#redis.password=
+#是否开启key的多节点冗余
+server:
+  enable:
+    redundant: false
+  bindPort: 6063
+  workThread: 5

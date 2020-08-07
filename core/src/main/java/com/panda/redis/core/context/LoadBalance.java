@@ -1,20 +1,35 @@
 package com.panda.redis.core.context;
 
 import com.panda.redis.base.api.Client;
-import com.panda.redis.core.loadBalance.LoadBalance;
+import com.panda.redis.core.loadBalance.ClientLoadBalance;
+import com.panda.redis.core.loadBalance.GroupLoadBalance;
 import com.panda.redis.core.loadBalance.impl.KeyHashLoadBalance;
+import com.panda.redis.core.loadBalance.impl.RoundRobinClientLoadBalance;
+import com.panda.redis.core.properties.GroupClient;
 
-public class ClientsLoadBalance {
+public class LoadBalance {
 
     private ServersContext serversContext;
 
-    private LoadBalance loadBalance = new KeyHashLoadBalance();
+    private GroupLoadBalance grouploadBalance = new KeyHashLoadBalance();
 
-    public ClientsLoadBalance() {
+
+    public LoadBalance() {
     }
 
-    public ClientsLoadBalance(ServersContext serversContext) {
+    public LoadBalance(ServersContext serversContext) {
         this.serversContext = serversContext;
+        serversContext.getGroupClients().stream().forEach(k -> serversContext.register(k, new RoundRobinClientLoadBalance()));
+    }
+
+    /**
+     * todo 并发问题
+     * @return
+     */
+    private Client chooseClient() {
+        GroupClient groupClient = grouploadBalance.chooseGroupServer(serversContext);
+        serversContext.setClients(groupClient.getClients());
+        return serversContext.getClientLoadBalance(groupClient).chooseClient(serversContext);
     }
 
     /**
@@ -29,8 +44,7 @@ public class ClientsLoadBalance {
     public String set(final String key, String value) {
         serversContext.setKey(key);
         serversContext.setValue(value);
-        Client client = loadBalance.chooseServer(serversContext);
-        return client.set(key, value);
+        return chooseClient().set(key, value);
     }
 
 
@@ -44,8 +58,7 @@ public class ClientsLoadBalance {
      */
     public String get(final String key) {
         serversContext.setKey(key);
-        Client client = loadBalance.chooseServer(serversContext);
-        return client.get(key);
+        return chooseClient().get(key);
     }
 
 
@@ -59,7 +72,6 @@ public class ClientsLoadBalance {
      */
     public String ping(final String key) {
         serversContext.setKey(key);
-        Client client = loadBalance.chooseServer(serversContext);
-        return client.get(key);
+        return chooseClient().get(key);
     }
 }

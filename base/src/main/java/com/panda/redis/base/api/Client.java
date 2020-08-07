@@ -18,6 +18,7 @@ package com.panda.redis.base.api;/* ━━━━━━如来保佑━━━━�
 
 
 import com.panda.redis.base.connection.Connection;
+import com.panda.redis.base.constants.ProxyConstants;
 import com.panda.redis.base.protocol.Protocol;
 
 /***
@@ -30,6 +31,11 @@ public class Client {
 
    public Client(String host,int port) {
       connection=new Connection(host,port);
+   }
+
+   public Client(String address) {
+      String[] nodes = address.split(ProxyConstants.NODE_PREFIX);
+      connection=new Connection(nodes[0],Integer.valueOf(nodes[1]));
    }
 
    /**

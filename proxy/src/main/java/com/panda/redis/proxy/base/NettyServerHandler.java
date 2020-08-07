@@ -1,11 +1,17 @@
 package com.panda.redis.proxy.base;
 
 import com.panda.redis.base.api.Client;
+import com.panda.redis.proxy.config.ProxyProperties;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,18 +20,14 @@ import java.util.concurrent.Future;
 /**
  * 自定义Handler需要继承netty规定好的某个HandlerAdapter(规范)
  */
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
-    private String ip;
-
-    private int port;
+    @Autowired
+    private ProxyProperties proxyProperties;
 
     public NettyServerHandler() {
-    }
-
-    public NettyServerHandler(String ip, int port) {
-        this.ip = ip;
-        this.port = port;
     }
 
     private static ExecutorService executor
@@ -49,7 +51,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 //        byte[] req = new byte[buf.readableBytes()];
 //        buf.readBytes(req);
         System.out.println("客户端发送消息是:" + req);
-        Client jedis = new Client(ip,port);
+        Client jedis = new Client(proxyProperties.getNodes().get(0));
         Future<String> future = executor.submit(() -> {
             return jedis.send(req.getBytes());
         });

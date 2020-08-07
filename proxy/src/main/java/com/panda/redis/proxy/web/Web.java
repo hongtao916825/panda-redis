@@ -1,5 +1,6 @@
 package com.panda.redis.proxy.web;
 
+import com.panda.redis.proxy.base.NettyServer;
 import com.panda.redis.proxy.config.AppConfig;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -16,10 +17,12 @@ import java.io.IOException;
 
 public class Web {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
         ctx.register(AppConfig.class);
         ctx.refresh();
+        NettyServer nettyServer = ctx.getBean(NettyServer.class);
+        nettyServer.start();
     }
 
 }
