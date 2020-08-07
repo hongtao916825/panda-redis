@@ -11,4 +11,5 @@ public interface ClientLoadBalance {
 
     Client chooseClient(ServersContext serversContext);
 
+    ClientLoadBalance cloneClientLoadBalance();
 }

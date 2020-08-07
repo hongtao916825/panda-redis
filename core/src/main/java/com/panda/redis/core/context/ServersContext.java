@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ServersContext {
 
-    private Map<String, ClientLoadBalance> clientLoadBalanceMap = new ConcurrentHashMap<>();
+//    private Map<String, ClientLoadBalance> clientLoadBalanceMap = new ConcurrentHashMap<>();
 
     private List<GroupClient> groupClients;
 
@@ -65,12 +65,12 @@ public class ServersContext {
         Clients = clients;
     }
 
-    public void register(GroupClient groupClient, ClientLoadBalance clientLoadBalance){
-        this.clientLoadBalanceMap.put(groupClient.getId(), clientLoadBalance);
-    }
-
-    public ClientLoadBalance getClientLoadBalance(GroupClient groupClient){
-        return this.clientLoadBalanceMap.get(groupClient.getId());
-    }
+//    public void register(GroupClient groupClient, ClientLoadBalance clientLoadBalance){
+//        this.clientLoadBalanceMap.put(groupClient.getId(), clientLoadBalance);
+//    }
+//
+//    public ClientLoadBalance getClientLoadBalance(GroupClient groupClient){
+//        return this.clientLoadBalanceMap.get(groupClient.getId());
+//    }
 
 }

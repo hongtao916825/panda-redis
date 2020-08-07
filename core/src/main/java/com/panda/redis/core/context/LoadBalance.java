@@ -6,31 +6,20 @@ import com.panda.redis.core.loadBalance.GroupLoadBalance;
 import com.panda.redis.core.loadBalance.impl.KeyHashLoadBalance;
 import com.panda.redis.core.loadBalance.impl.RoundRobinClientLoadBalance;
 import com.panda.redis.core.properties.GroupClient;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 public class LoadBalance {
 
-    private ServersContext serversContext;
+    private JedisPool jedisPool;
 
-    private GroupLoadBalance grouploadBalance = new KeyHashLoadBalance();
-
+    public LoadBalance(JedisPool jedisPool) {
+        this.jedisPool = jedisPool;
+    }
 
     public LoadBalance() {
     }
 
-    public LoadBalance(ServersContext serversContext) {
-        this.serversContext = serversContext;
-        serversContext.getGroupClients().stream().forEach(k -> serversContext.register(k, new RoundRobinClientLoadBalance()));
-    }
-
-    /**
-     * todo 并发问题
-     * @return
-     */
-    private Client chooseClient() {
-        GroupClient groupClient = grouploadBalance.chooseGroupServer(serversContext);
-        serversContext.setClients(groupClient.getClients());
-        return serversContext.getClientLoadBalance(groupClient).chooseClient(serversContext);
-    }
 
     /**
      * Set the string value as value of the key. The string can't be longer than 1073741824 bytes (1
@@ -42,9 +31,9 @@ public class LoadBalance {
      * @return Status code reply
      */
     public String set(final String key, String value) {
-        serversContext.setKey(key);
-        serversContext.setValue(value);
-        return chooseClient().set(key, value);
+//        serversContext.setKey(key);
+//        serversContext.setValue(value);
+        return jedisPool.getResource().set(key, value);
     }
 
 
@@ -57,8 +46,8 @@ public class LoadBalance {
      * @return Bulk reply
      */
     public String get(final String key) {
-        serversContext.setKey(key);
-        return chooseClient().get(key);
+//        serversContext.setKey(key);
+        return jedisPool.getResource().get(key);
     }
 
 
@@ -71,7 +60,7 @@ public class LoadBalance {
      * @return Bulk reply
      */
     public String ping(final String key) {
-        serversContext.setKey(key);
-        return chooseClient().get(key);
+//        serversContext.setKey(key);
+        return jedisPool.getResource().get(key);
     }
 }

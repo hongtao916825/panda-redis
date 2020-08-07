@@ -1,0 +1,3 @@
+# Auto Configure
+com.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.panda.redis.core.autoconfigure.PandaRedisAutoConfiguration

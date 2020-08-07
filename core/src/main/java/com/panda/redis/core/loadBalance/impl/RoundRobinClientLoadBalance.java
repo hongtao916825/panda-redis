@@ -4,11 +4,15 @@ import com.panda.redis.base.api.Client;
 import com.panda.redis.core.context.ServersContext;
 import com.panda.redis.core.loadBalance.abstractImpl.AbstractClientLoadBalance;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
+@Component
+@Lazy(true)
 public class RoundRobinClientLoadBalance extends AbstractClientLoadBalance {
 
     private AtomicInteger nextServerCyclicCounter;

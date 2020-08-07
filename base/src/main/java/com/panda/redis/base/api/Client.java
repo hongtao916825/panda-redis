@@ -20,12 +20,13 @@ package com.panda.redis.base.api;/* ━━━━━━如来保佑━━━━�
 import com.panda.redis.base.connection.Connection;
 import com.panda.redis.base.constants.ProxyConstants;
 import com.panda.redis.base.protocol.Protocol;
+import redis.clients.jedis.Jedis;
 
 /***
  * 就是给程序员提供API接口的
  * api操作层
  */
-public class Client {
+public class Client extends Jedis {
 
    private Connection connection;
 
@@ -47,6 +48,7 @@ public class Client {
     * @param value
     * @return Status code reply
     */
+   @Override
    public String set(final String key, String value) {
       connection.sendCommand(Protocol.Command.SET,SafeEncode.encode(key),SafeEncode.encode(value));//TODO 发送数据
       return  connection.getStatusReply();
@@ -65,6 +67,7 @@ public class Client {
     * @param key
     * @return Bulk reply
     */
+   @Override
    public String get(final String key) {
          connection.sendCommand(Protocol.Command.GET,SafeEncode.encode(key));
       return  connection.getStatusReply();
@@ -79,6 +82,7 @@ public class Client {
     * @param key
     * @return Bulk reply
     */
+   @Override
    public String ping(final String key) {
       connection.sendCommand(Protocol.Command.GET,SafeEncode.encode(key));
       return  connection.getStatusReply();
