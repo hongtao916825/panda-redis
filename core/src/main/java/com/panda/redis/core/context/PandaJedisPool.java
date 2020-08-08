@@ -20,6 +20,7 @@ import java.util.List;
 @Component
 public class PandaJedisPool extends JedisPool {
 
+    @Autowired
     private GroupLoadBalance groupLoadBalance;
 
     private List<GroupClient> groupClientLists;

@@ -25,17 +25,17 @@ public class PandaRedisProperties {
     /**返回jedis到池中Jedis 实例都会经过测试*/
     private  boolean testOnRetrun = false;
 
-    private String groupLoadBalance;
+//    private String groupLoadBalance;
 
     private List<GroupClient> groupClients;
 
-    public String getGroupLoadBalance() {
-        return groupLoadBalance;
-    }
-
-    public void setGroupLoadBalance(String groupLoadBalance) {
-        this.groupLoadBalance = groupLoadBalance;
-    }
+//    public String getGroupLoadBalance() {
+//        return groupLoadBalance;
+//    }
+//
+//    public void setGroupLoadBalance(String groupLoadBalance) {
+//        this.groupLoadBalance = groupLoadBalance;
+//    }
 
     public List<GroupClient> getGroupClients() {
         return groupClients;
