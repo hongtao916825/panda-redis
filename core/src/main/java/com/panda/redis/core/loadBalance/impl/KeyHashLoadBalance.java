@@ -1,10 +1,8 @@
 package com.panda.redis.core.loadBalance.impl;
 
-import com.panda.redis.base.api.Client;
 import com.panda.redis.core.context.ServersContext;
-import com.panda.redis.core.loadBalance.GroupLoadBalance;
 import com.panda.redis.core.loadBalance.abstractImpl.AbstractGroupLoadBalance;
-import com.panda.redis.core.properties.GroupClient;
+import com.panda.redis.core.properties.GroupProxy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,9 +11,9 @@ import java.util.List;
 public class KeyHashLoadBalance extends AbstractGroupLoadBalance {
 
     @Override
-    public GroupClient doChooseGroupServer(ServersContext serversContext) {
+    public GroupProxy doChooseGroupServer(ServersContext serversContext) {
         String key = serversContext.getKey();
-        List<GroupClient> servers = serversContext.getGroupClients();
+        List<GroupProxy> servers = serversContext.getGroupClients();
         int result = key.hashCode()&Integer.MAX_VALUE;
         int i = result % servers.size();
         return servers.get(i);

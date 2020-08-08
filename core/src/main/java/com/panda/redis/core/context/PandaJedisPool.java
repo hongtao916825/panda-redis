@@ -2,13 +2,11 @@ package com.panda.redis.core.context;
 
 import com.panda.redis.base.api.Client;
 import com.panda.redis.core.loadBalance.GroupLoadBalance;
-import com.panda.redis.core.loadBalance.impl.KeyHashLoadBalance;
-import com.panda.redis.core.properties.GroupClient;
+import com.panda.redis.core.properties.GroupProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolAbstract;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisException;
 
@@ -23,11 +21,11 @@ public class PandaJedisPool extends JedisPool {
     @Autowired
     private GroupLoadBalance groupLoadBalance;
 
-    private List<GroupClient> groupClientLists;
+    private List<GroupProxy> groupClientLists;
 
     public PandaJedisPool(){}
 
-    public PandaJedisPool(JedisPoolConfig jedisPoolConfig,List<GroupClient> groupClientLists){super(jedisPoolConfig);this.groupClientLists = groupClientLists;}
+    public PandaJedisPool(JedisPoolConfig jedisPoolConfig,List<GroupProxy> groupClientLists){super(jedisPoolConfig);this.groupClientLists = groupClientLists;}
 
     public GroupLoadBalance getGroupLoadBalance() {
         return groupLoadBalance;
@@ -44,7 +42,7 @@ public class PandaJedisPool extends JedisPool {
     private Client chooseClient() {
         try {
             ServersContext.get().setGroupClients(groupClientLists);
-            GroupClient groupClient = groupLoadBalance.chooseGroupServer();
+            GroupProxy groupClient = groupLoadBalance.chooseGroupServer();
             ServersContext.get().setClients(groupClient.getClients());
             return groupClient.chooseClient();
         }finally {

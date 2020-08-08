@@ -2,7 +2,7 @@ package com.panda.redis.core.loadBalance.impl;
 
 import com.panda.redis.base.api.Client;
 import com.panda.redis.core.context.ServersContext;
-import com.panda.redis.core.loadBalance.abstractImpl.AbstractClientLoadBalance;
+import com.panda.redis.core.loadBalance.abstractImpl.AbstractProxyLoadBalance;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -13,16 +13,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @Component
 @Lazy(true)
-public class RoundRobinClientLoadBalance extends AbstractClientLoadBalance {
+public class RoundRobinProxyLoadBalance extends AbstractProxyLoadBalance {
 
     private AtomicInteger nextServerCyclicCounter;
 
-    public RoundRobinClientLoadBalance() {
+    public RoundRobinProxyLoadBalance() {
         nextServerCyclicCounter = new AtomicInteger(0);
     }
 
     @Override
-    protected Client doChooseClient(ServersContext serversContext) {
+    protected Client doChooseProxy(ServersContext serversContext) {
         Client server = null;
         int count = 0;
         while (server == null && count++ < 10) {

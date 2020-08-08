@@ -1,19 +1,16 @@
 package com.panda.redis.core.context;
 
 import com.panda.redis.base.api.Client;
-import com.panda.redis.core.loadBalance.ClientLoadBalance;
-import com.panda.redis.core.properties.GroupClient;
+import com.panda.redis.core.properties.GroupProxy;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ServersContext {
     private static ThreadLocal<ServersContext> threadLocal = new ThreadLocal<>();
 
 //    private Map<String, ClientLoadBalance> clientLoadBalanceMap = new ConcurrentHashMap<>();
 
-    private List<GroupClient> groupClients;
+    private List<GroupProxy> groupClients;
 
     private String key;
 
@@ -24,21 +21,21 @@ public class ServersContext {
     public ServersContext() {
     }
 
-    public ServersContext(List<GroupClient> servers) {
+    public ServersContext(List<GroupProxy> servers) {
         this.groupClients = servers;
     }
 
-    public ServersContext(List<GroupClient> groupClients, String key, String value) {
+    public ServersContext(List<GroupProxy> groupClients, String key, String value) {
         this.groupClients = groupClients;
         this.key = key;
         this.value = value;
     }
 
-    public List<GroupClient> getGroupClients() {
+    public List<GroupProxy> getGroupClients() {
         return groupClients;
     }
 
-    public void setGroupClients(List<GroupClient> groupClients) {
+    public void setGroupClients(List<GroupProxy> groupClients) {
         this.groupClients = groupClients;
     }
 

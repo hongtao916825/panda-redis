@@ -1,10 +1,7 @@
 package com.panda.redis.core.properties;
 
 import com.panda.redis.base.api.Client;
-import com.panda.redis.core.context.ServersContext;
-import com.panda.redis.core.loadBalance.ClientLoadBalance;
-import com.panda.redis.core.loadBalance.GroupLoadBalance;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.panda.redis.core.loadBalance.ProxyLoadBalance;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -13,9 +10,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class GroupClient {
+public class GroupProxy {
 
-    private ClientLoadBalance clientLoadBalanceRule;
+    private ProxyLoadBalance proxyLoadBalanceRule;
 
     private String clientLoadBalance;
 
@@ -25,7 +22,7 @@ public class GroupClient {
 
     private List<Client> clients;
 
-    public GroupClient(){
+    public GroupProxy(){
         // 每一个集群生成一个id
         id = StringUtils.isEmpty(id)? UUID.randomUUID().toString() : id;
         clients = new ArrayList<>();
@@ -48,12 +45,12 @@ public class GroupClient {
         this.id = id;
     }
 
-    public GroupClient addClients(List<Client> clients) {
+    public GroupProxy addClients(List<Client> clients) {
         this.clients.addAll(clients);
         return this;
     }
 
-    public GroupClient addClient(Client client) {
+    public GroupProxy addClient(Client client) {
         this.clients.add(client);
         return this;
     }
@@ -67,16 +64,16 @@ public class GroupClient {
         nodes.stream().map(Client::new).forEach(clients::add);
     }
 
-    public ClientLoadBalance getClientLoadBalanceRule() {
-        return clientLoadBalanceRule;
+    public ProxyLoadBalance getProxyLoadBalanceRule() {
+        return proxyLoadBalanceRule;
     }
 
-    public void setClientLoadBalanceRule(ClientLoadBalance clientLoadBalance) {
-        this.clientLoadBalanceRule = clientLoadBalance;
+    public void setProxyLoadBalanceRule(ProxyLoadBalance clientLoadBalance) {
+        this.proxyLoadBalanceRule = clientLoadBalance;
     }
 
     public Client chooseClient() {
-        return clientLoadBalanceRule.chooseClient();
+        return proxyLoadBalanceRule.chooseProxy();
     }
 
     public String getClientLoadBalance() {

@@ -27,7 +27,7 @@ public class PandaRedisProperties {
 
 //    private String groupLoadBalance;
 
-    private List<GroupClient> groupClients;
+    private List<GroupProxy> groupProxies;
 
 //    public String getGroupLoadBalance() {
 //        return groupLoadBalance;
@@ -37,12 +37,12 @@ public class PandaRedisProperties {
 //        this.groupLoadBalance = groupLoadBalance;
 //    }
 
-    public List<GroupClient> getGroupClients() {
-        return groupClients;
+    public List<GroupProxy> getGroupProxies() {
+        return groupProxies;
     }
 
-    public void setGroupClients(List<GroupClient> groupClients) {
-        this.groupClients = groupClients;
+    public void setGroupProxies(List<GroupProxy> groupProxies) {
+        this.groupProxies = groupProxies;
     }
 
     public Integer getMaxTotal() {
