@@ -9,8 +9,8 @@ import com.panda.redis.core.properties.GroupClient;
 public abstract class AbstractGroupLoadBalance implements GroupLoadBalance {
 
     @Override
-    public GroupClient chooseGroupServer(ServersContext serversContext){
-        return this.doChooseGroupServer(serversContext);
+    public GroupClient chooseGroupServer(){
+        return this.doChooseGroupServer(ServersContext.get());
     }
 
     protected abstract GroupClient doChooseGroupServer(ServersContext serversContext);

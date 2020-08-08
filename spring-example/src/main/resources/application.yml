@@ -4,15 +4,12 @@ panda:
     min-idle: 0
     max-idle: 20
     max-wait: -1
-    groupClients:
-      - groupClient:
-          nodes:
-            - 127.0.0.1:6061
-            - 127.0.0.1:6062
-          clientLoadBalance: roundRobinClientLoadBalance
-      - groupClient:
-          nodes:
-            - 127.0.0.1:6061
-            - 127.0.0.1:6062
+    group-load-balance: com.panda.redis.core.loadBalance.impl.KeyHashLoadBalance
+    group-clients[0]:
+      nodes[0]: 127.0.0.1:6061
+      nodes[1]: 127.0.0.1:6062
+      client-load-balance: com.panda.redis.core.loadBalance.impl.RoundRobinClientLoadBalance
+    group-clients[1]:
+      nodes[0]: 127.0.0.1:6063
 server:
   port: 8080

@@ -11,8 +11,8 @@ import java.lang.reflect.InvocationTargetException;
 public abstract class AbstractClientLoadBalance implements ClientLoadBalance {
 
     @Override
-    public Client chooseClient(ServersContext serversContext){
-        return doChooseClient(serversContext);
+    public Client chooseClient(){
+        return doChooseClient(ServersContext.get());
     }
 
     protected abstract Client doChooseClient(ServersContext serversContext);

@@ -9,6 +9,6 @@ import com.panda.redis.core.properties.GroupClient;
  */
 public interface GroupLoadBalance {
 
-    GroupClient chooseGroupServer(ServersContext serversContext);
+    GroupClient chooseGroupServer();
 
 }

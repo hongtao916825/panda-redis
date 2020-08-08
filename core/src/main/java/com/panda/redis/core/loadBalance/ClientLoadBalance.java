@@ -9,7 +9,7 @@ import com.panda.redis.core.properties.GroupClient;
  */
 public interface ClientLoadBalance {
 
-    Client chooseClient(ServersContext serversContext);
+    Client chooseClient();
 
     ClientLoadBalance cloneClientLoadBalance();
 }

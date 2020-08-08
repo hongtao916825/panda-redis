@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ServersContext {
+    private static ThreadLocal<ServersContext> threadLocal = new ThreadLocal<>();
 
 //    private Map<String, ClientLoadBalance> clientLoadBalanceMap = new ConcurrentHashMap<>();
 
@@ -63,6 +64,18 @@ public class ServersContext {
 
     public void setClients(List<Client> clients) {
         Clients = clients;
+    }
+
+    public static void put(ServersContext serversContext){
+        threadLocal.set(serversContext);
+    }
+
+    public static ServersContext get(){
+        return threadLocal.get();
+    }
+
+    public static void remove(){
+        threadLocal.remove();
     }
 
 //    public void register(GroupClient groupClient, ClientLoadBalance clientLoadBalance){

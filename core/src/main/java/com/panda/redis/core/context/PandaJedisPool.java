@@ -12,28 +12,43 @@ import redis.clients.jedis.JedisPoolAbstract;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisException;
 
+import java.util.List;
+
 /**
  * @author tao.hong
  */
 @Component
 public class PandaJedisPool extends JedisPool {
 
-    private ServersContext serversContext;
-
     private GroupLoadBalance groupLoadBalance;
+
+    private List<GroupClient> groupClientLists;
 
     public PandaJedisPool(){}
 
-    public PandaJedisPool(JedisPoolConfig jedisPoolConfig){super(jedisPoolConfig);}
+    public PandaJedisPool(JedisPoolConfig jedisPoolConfig,List<GroupClient> groupClientLists){super(jedisPoolConfig);this.groupClientLists = groupClientLists;}
+
+    public GroupLoadBalance getGroupLoadBalance() {
+        return groupLoadBalance;
+    }
+
+    public void setGroupLoadBalance(GroupLoadBalance groupLoadBalance) {
+        this.groupLoadBalance = groupLoadBalance;
+    }
 
     /**
      * todo 并发问题
      * @return
      */
     private Client chooseClient() {
-        GroupClient groupClient = groupLoadBalance.chooseGroupServer(serversContext);
-        serversContext.setClients(groupClient.getClients());
-        return groupClient.chooseClient(serversContext);
+        try {
+            ServersContext.get().setGroupClients(groupClientLists);
+            GroupClient groupClient = groupLoadBalance.chooseGroupServer();
+            ServersContext.get().setClients(groupClient.getClients());
+            return groupClient.chooseClient();
+        }finally {
+            ServersContext.remove();
+        }
     }
 
     @Override

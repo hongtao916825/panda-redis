@@ -2,7 +2,7 @@
 redis:
   cluster: single
   #redis节点id
-  nodes: 47.97.215.217:6063
+  nodes: 47.97.215.217:6061
 #redis.database=0
 #redis.password=
 #是否开启key的多节点冗余

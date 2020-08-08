@@ -9,15 +9,15 @@ import com.panda.redis.core.properties.GroupClient;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
-public class LoadBalance {
+public class RedisLoadBalance {
 
     private JedisPool jedisPool;
 
-    public LoadBalance(JedisPool jedisPool) {
+    public RedisLoadBalance(JedisPool jedisPool) {
         this.jedisPool = jedisPool;
     }
 
-    public LoadBalance() {
+    public RedisLoadBalance() {
     }
 
 
@@ -31,9 +31,20 @@ public class LoadBalance {
      * @return Status code reply
      */
     public String set(final String key, String value) {
+        setValue(key, value);
 //        serversContext.setKey(key);
 //        serversContext.setValue(value);
         return jedisPool.getResource().set(key, value);
+    }
+
+    private void setValue(String key, String value) {
+        ServersContext serversContext = ServersContext.get();
+        if (serversContext == null) {
+            serversContext = new ServersContext();
+            ServersContext.put(serversContext);
+        }
+        serversContext.setKey(key);
+        serversContext.setKey(value);
     }
 
 
@@ -46,7 +57,7 @@ public class LoadBalance {
      * @return Bulk reply
      */
     public String get(final String key) {
-//        serversContext.setKey(key);
+        setValue(key, null);
         return jedisPool.getResource().get(key);
     }
 
@@ -60,6 +71,7 @@ public class LoadBalance {
      * @return Bulk reply
      */
     public String ping(final String key) {
+        setValue(key, null);
 //        serversContext.setKey(key);
         return jedisPool.getResource().get(key);
     }

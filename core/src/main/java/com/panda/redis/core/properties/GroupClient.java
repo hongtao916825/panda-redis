@@ -29,7 +29,6 @@ public class GroupClient {
         // 每一个集群生成一个id
         id = StringUtils.isEmpty(id)? UUID.randomUUID().toString() : id;
         clients = new ArrayList<>();
-        nodes.stream().map(Client::new).forEach(clients::add);
     }
 
 
@@ -65,6 +64,7 @@ public class GroupClient {
 
     public void setNodes(List<String> nodes) {
         this.nodes = nodes;
+        nodes.stream().map(Client::new).forEach(clients::add);
     }
 
     public ClientLoadBalance getClientLoadBalanceRule() {
@@ -75,8 +75,8 @@ public class GroupClient {
         this.clientLoadBalanceRule = clientLoadBalance;
     }
 
-    public Client chooseClient(ServersContext serversContext) {
-        return clientLoadBalanceRule.chooseClient(serversContext);
+    public Client chooseClient() {
+        return clientLoadBalanceRule.chooseClient();
     }
 
     public String getClientLoadBalance() {
