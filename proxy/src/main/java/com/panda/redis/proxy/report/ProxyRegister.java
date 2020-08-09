@@ -10,6 +10,5 @@ public interface ProxyRegister {
 
     void register();
 
-    String registerPrefix();
 
 }

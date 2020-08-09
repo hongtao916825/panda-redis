@@ -9,8 +9,7 @@ redis:
 server:
   enable:
     redundant: false
-  bindPort: 6063
+  bindPort: 6061
   workThread: 5
   groupId: 2
-  #registerAddress: zookeeper:4127.0.0.1:2181,127.0.0.1:2182
   registerAddress: zookeeper:127.0.0.1:2181

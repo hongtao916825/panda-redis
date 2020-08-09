@@ -3,6 +3,7 @@ package com.panda.redis.core.context;
 import com.panda.redis.base.api.Client;
 import com.panda.redis.core.properties.GroupProxy;
 
+import java.util.Collection;
 import java.util.List;
 
 public class ServersContext {

@@ -42,7 +42,7 @@ public class PandaJedisPool extends JedisPool {
      */
     private Client chooseClient() {
         try {
-            ServersContext.get().setGroupClients(ProxyLoaderContext.groupProxyList);
+            ServersContext.get().setGroupClients(ProxyLoaderContext.getGroupProxyList());
             GroupProxy groupClient = groupLoadBalance.chooseGroupServer();
             ServersContext.get().setClients(groupClient.getClients());
             return groupClient.chooseClient();

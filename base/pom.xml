@@ -12,8 +12,8 @@
     <artifactId>base</artifactId>
 
     <properties>
-        <curator.version>4.0.0</curator.version>
-        <zookeeper.version>3.4.9</zookeeper.version>
+        <curator.version>2.13.0</curator.version>
+        <zookeeper.version>3.6.1</zookeeper.version>
         <redis.clinet.version>3.3.0</redis.clinet.version>
     </properties>
 

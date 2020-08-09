@@ -1,6 +1,5 @@
 package com.panda.redis.core.address.zkImpl;
 
-import com.panda.redis.base.api.Client;
 import com.panda.redis.base.constants.ProxyConstants;
 import com.panda.redis.core.address.ProxyLoader;
 import com.panda.redis.core.address.ProxyLoaderContext;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class ZookeeperProxyRegisterImpl implements ProxyLoader, ApplicationContextAware {
@@ -43,24 +41,54 @@ public class ZookeeperProxyRegisterImpl implements ProxyLoader, ApplicationConte
     @Override
     public void loadAddress() {
         List<String> groupList = curatorCrud.getChildren(ProxyConstants.GROUP_REGISTER);
+        ProxyLoadBalance proxyLoadBalance = (ProxyLoadBalance) applicationContext.getBean("proxyLoadBalance");
         Assert.notEmpty(groupList,"no group list");
-        System.out.println(groupList);
         List<GroupProxy> groupProxyList = new ArrayList<>();
         Map<String, GroupProxy> groupProxyMap = new HashMap<>();
-        groupList.stream().forEach(groupPath ->{
+        groupList.stream().forEach(childPath ->{
+            String groupPath = ProxyConstants.GROUP_REGISTER + "/" + childPath;
             GroupProxy groupProxy = groupProxyMap.get(groupPath);
             if(groupProxy == null){
                 groupProxy = new GroupProxy();
                 groupProxyMap.put(groupPath, groupProxy);
+                this.registerProxiesListener(groupPath);
             }
-            List<String> proxyList = curatorCrud.getChildren(ProxyConstants.GROUP_REGISTER+"/"+groupPath);
-            Assert.notEmpty(proxyList,"no proxy list");
-            groupProxy.setProxyLoadBalanceRule((ProxyLoadBalance) applicationContext.getBean("proxyLoadBalance"));
-            List<Client> clientList = proxyList.stream().map(proxy -> proxy.replace("/", "")).map(Client::new).collect(Collectors.toList());
-            groupProxy.addClients(clientList);
+            groupProxy.setProxyLoadBalanceRule(proxyLoadBalance);
+            List<String> proxyList = curatorCrud.getChildren(groupPath);
+            groupProxy.reflushClients(proxyList, groupPath);
             groupProxyList.add(groupProxy);
+
         });
-        ProxyLoaderContext.groupProxyList.addAll(groupProxyList);
+        Assert.notEmpty(groupProxyList,"no proxy list");
+        ProxyLoaderContext.groupProxyMap.putAll(groupProxyMap);
+        ProxyLoaderContext.reflushProxyList();
+        this.registerGroupListener(proxyLoadBalance);
+    }
+
+    private void registerGroupListener(ProxyLoadBalance proxyLoadBalance) {
+        try {
+            curatorCrud.lister(ProxyConstants.GROUP_REGISTER, (changedParams)->{
+                List<String> childPath = changedParams.getChildPath();
+                ProxyLoaderContext.addGroup(changedParams.getParentPath(), childPath, proxyLoadBalance);
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void registerProxiesListener(String path) {
+        try {
+            curatorCrud.lister(path, (changedParams)->{
+                String parentPath = changedParams.getParentPath();
+                List<String> childPath = changedParams.getChildPath();
+                GroupProxy groupProxy = ProxyLoaderContext.groupProxyMap.get(parentPath);
+                groupProxy.reflushClients(childPath, parentPath);
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private ApplicationContext applicationContext;

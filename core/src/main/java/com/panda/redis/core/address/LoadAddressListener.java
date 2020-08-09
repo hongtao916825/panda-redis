@@ -15,5 +15,6 @@ public class LoadAddressListener implements ApplicationListener<ContextRefreshed
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         proxyLoader.initRegister();
         proxyLoader.loadAddress();
+//        proxyLoader.registerWatch();
     }
 }

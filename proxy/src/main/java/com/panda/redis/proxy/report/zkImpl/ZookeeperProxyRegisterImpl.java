@@ -53,7 +53,9 @@ public class ZookeeperProxyRegisterImpl implements ProxyRegister {
 //                curatorCrud.setData(ProxyConstants.GROUP_REGISTER + "/" + proxyProperties.getGroupId(), InetAddress.getLocalHost().getHostAddress()+":" + proxyProperties.getBindPort());
                 if(!curatorCrud.exists(ProxyConstants.GROUP_REGISTER + "/" + proxyProperties.getGroupId())){
                     if(curatorCrud.lock(ProxyConstants.GROUP_REGISTER_LOCK + proxyProperties.getGroupId())){
-                        curatorCrud.createPersistent(ProxyConstants.GROUP_REGISTER + "/" + proxyProperties.getGroupId(), "");
+                        // 临时节点下不能创建子节点
+                        curatorCrud.createPersistent(ProxyConstants.GROUP_REGISTER + "/" + proxyProperties.getGroupId(), "online");
+                        curatorCrud.unlock(ProxyConstants.GROUP_REGISTER_LOCK + proxyProperties.getGroupId());
                     }
                     this.register();
                 } else {
@@ -87,8 +89,4 @@ public class ZookeeperProxyRegisterImpl implements ProxyRegister {
         }
     }
 
-    @Override
-    public String registerPrefix() {
-        return PREFIX;
-    }
 }

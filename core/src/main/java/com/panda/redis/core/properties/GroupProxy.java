@@ -1,7 +1,10 @@
 package com.panda.redis.core.properties;
 
 import com.panda.redis.base.api.Client;
+import com.panda.redis.core.address.ProxyLoaderContext;
+import com.panda.redis.core.context.ServersContext;
 import com.panda.redis.core.loadBalance.ProxyLoadBalance;
+import com.sun.xml.internal.ws.api.policy.PolicyResolver;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -13,8 +16,6 @@ import java.util.UUID;
 public class GroupProxy {
 
     private ProxyLoadBalance proxyLoadBalanceRule;
-
-    private String clientLoadBalance;
 
     private String id;
 
@@ -80,11 +81,14 @@ public class GroupProxy {
         return proxyLoadBalanceRule.chooseProxy();
     }
 
-    public String getClientLoadBalance() {
-        return clientLoadBalance;
-    }
-
-    public void setClientLoadBalance(String clientLoadBalance) {
-        this.clientLoadBalance = clientLoadBalance;
+    public void reflushClients(List<String> childPath,String path) {
+        synchronized (this){
+            this.getClients().clear();
+            if(childPath.isEmpty()){
+                // 没有proxy，剔除集群
+                ProxyLoaderContext.removeGroup(path);
+            }
+            childPath.stream().map(Client :: new).forEach(this.getClients()::add);
+        }
     }
 }

@@ -86,7 +86,7 @@ public class CuratorCrud {
          cf.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path, path.getBytes());
          return true;
       } catch (Exception e) {
-
+         e.printStackTrace();
       }
       return false;
    }

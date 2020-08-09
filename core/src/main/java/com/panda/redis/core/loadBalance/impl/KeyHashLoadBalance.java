@@ -5,6 +5,7 @@ import com.panda.redis.core.loadBalance.abstractImpl.AbstractGroupLoadBalance;
 import com.panda.redis.core.properties.GroupProxy;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 
 @Component
