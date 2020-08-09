@@ -2,7 +2,7 @@
 redis:
   cluster: single
   #redis节点id
-  nodes: 47.97.215.217:6063
+  nodes: 127.0.0.1:6063
 #redis.database=0
 #redis.password=
 #是否开启key的多节点冗余
@@ -12,6 +12,5 @@ server:
   bindPort: 6063
   workThread: 5
   groupId: 2
-  proxyId: 1
-  #registerAddress: zookeeper:47.97.215.217:2181,47.97.215.217:2182
-  registerAddress: zookeeper:47.97.215.217:2181
+  #registerAddress: zookeeper:4127.0.0.1:2181,127.0.0.1:2182
+  registerAddress: zookeeper:127.0.0.1:2181
