@@ -9,7 +9,7 @@ public class PandaRedisProperties {
 
     public static final String PANDAREDIS_PREFIX = "panda.redis";
 
-
+    private String registerAddress;
 //    private String password;
 
     private Integer maxTotal=50;
@@ -27,7 +27,7 @@ public class PandaRedisProperties {
 
 //    private String groupLoadBalance;
 
-    private List<GroupProxy> groupProxies;
+//    private List<GroupProxy> groupProxies;
 
 //    public String getGroupLoadBalance() {
 //        return groupLoadBalance;
@@ -36,14 +36,14 @@ public class PandaRedisProperties {
 //    public void setGroupLoadBalance(String groupLoadBalance) {
 //        this.groupLoadBalance = groupLoadBalance;
 //    }
-
-    public List<GroupProxy> getGroupProxies() {
-        return groupProxies;
-    }
-
-    public void setGroupProxies(List<GroupProxy> groupProxies) {
-        this.groupProxies = groupProxies;
-    }
+//
+//    public List<GroupProxy> getGroupProxies() {
+//        return groupProxies;
+//    }
+//
+//    public void setGroupProxies(List<GroupProxy> groupProxies) {
+//        this.groupProxies = groupProxies;
+//    }
 
     public Integer getMaxTotal() {
         return maxTotal;
@@ -93,4 +93,11 @@ public class PandaRedisProperties {
         this.testOnRetrun = testOnRetrun;
     }
 
+    public String getRegisterAddress() {
+        return registerAddress;
+    }
+
+    public void setRegisterAddress(String registerAddress) {
+        this.registerAddress = registerAddress;
+    }
 }

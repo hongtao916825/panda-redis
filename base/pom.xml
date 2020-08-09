@@ -11,11 +11,36 @@
 
     <artifactId>base</artifactId>
 
+    <properties>
+        <curator.version>4.0.0</curator.version>
+        <zookeeper.version>3.4.9</zookeeper.version>
+        <redis.clinet.version>3.3.0</redis.clinet.version>
+    </properties>
+
     <dependencies>
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-recipes</artifactId>
+            <version>${curator.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-framework</artifactId>
+            <version>${curator.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>${zookeeper.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>3.3.0</version>
+            <version>${redis.clinet.version}</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

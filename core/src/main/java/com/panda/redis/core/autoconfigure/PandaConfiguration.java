@@ -20,8 +20,6 @@ import javax.annotation.PostConstruct;
 @Slf4j
 public class PandaConfiguration implements ApplicationContextAware {
 
-    private static final String DEFAULT_PROXY_LOADBALANCE = "com.panda.redis.core.loadBalance.impl.RoundRobinProxyLoadBalance";
-
     @Autowired
     private PandaRedisProperties pandaRedisProperties;
 
@@ -35,7 +33,7 @@ public class PandaConfiguration implements ApplicationContextAware {
         jedisPoolConfig.setMinIdle(pandaRedisProperties.getMinIdel());
         jedisPoolConfig.setTestOnBorrow(pandaRedisProperties.isTestOnBorrow());
         jedisPoolConfig.setTestOnReturn(pandaRedisProperties.isTestOnRetrun());
-        PandaJedisPool jedisPool = new PandaJedisPool(jedisPoolConfig, pandaRedisProperties.getGroupProxies());
+        PandaJedisPool jedisPool = new PandaJedisPool(jedisPoolConfig);
         return jedisPool;
     }
 
@@ -53,29 +51,29 @@ public class PandaConfiguration implements ApplicationContextAware {
         this.applicationContext = applicationContext;
     }
 
-    @PostConstruct
-    public void setClientLoadbalance() throws Exception {
-        pandaRedisProperties.getGroupProxies().forEach(k ->{
-            String clientLoadBalanceName = k.getClientLoadBalance();
-            if(StringUtils.isEmpty(clientLoadBalanceName)){
-                clientLoadBalanceName = DEFAULT_PROXY_LOADBALANCE;
-            }
-            try {
-                Class clazz = Class.forName(clientLoadBalanceName);
-                ProxyLoadBalance proxyLoadBalance = (ProxyLoadBalance)clazz.newInstance();
-                applicationContext.getAutowireCapableBeanFactory().autowireBean(proxyLoadBalance);
-                k.setProxyLoadBalanceRule(proxyLoadBalance);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            }
-
-        });
-
-    }
+//    @PostConstruct
+//    public void setClientLoadbalance() throws Exception {
+//        pandaRedisProperties.getGroupProxies().forEach(k ->{
+//            String clientLoadBalanceName = k.getClientLoadBalance();
+//            if(StringUtils.isEmpty(clientLoadBalanceName)){
+//                clientLoadBalanceName = DEFAULT_PROXY_LOADBALANCE;
+//            }
+//            try {
+//                Class clazz = Class.forName(clientLoadBalanceName);
+//                ProxyLoadBalance proxyLoadBalance = (ProxyLoadBalance)clazz.newInstance();
+//                applicationContext.getAutowireCapableBeanFactory().autowireBean(proxyLoadBalance);
+//                k.setProxyLoadBalanceRule(proxyLoadBalance);
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IllegalAccessException e) {
+//                e.printStackTrace();
+//            } catch (InstantiationException e) {
+//                e.printStackTrace();
+//            }
+//
+//        });
+//
+//    }
 
 
 

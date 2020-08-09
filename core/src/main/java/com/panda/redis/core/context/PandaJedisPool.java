@@ -1,6 +1,7 @@
 package com.panda.redis.core.context;
 
 import com.panda.redis.base.api.Client;
+import com.panda.redis.core.address.ProxyLoaderContext;
 import com.panda.redis.core.loadBalance.GroupLoadBalance;
 import com.panda.redis.core.properties.GroupProxy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,11 @@ public class PandaJedisPool extends JedisPool {
     @Autowired
     private GroupLoadBalance groupLoadBalance;
 
-    private List<GroupProxy> groupClientLists;
+//    private List<GroupProxy> groupClientLists;
 
     public PandaJedisPool(){}
 
-    public PandaJedisPool(JedisPoolConfig jedisPoolConfig,List<GroupProxy> groupClientLists){super(jedisPoolConfig);this.groupClientLists = groupClientLists;}
+    public PandaJedisPool(JedisPoolConfig jedisPoolConfig){super(jedisPoolConfig);}
 
     public GroupLoadBalance getGroupLoadBalance() {
         return groupLoadBalance;
@@ -41,7 +42,7 @@ public class PandaJedisPool extends JedisPool {
      */
     private Client chooseClient() {
         try {
-            ServersContext.get().setGroupClients(groupClientLists);
+            ServersContext.get().setGroupClients(ProxyLoaderContext.groupProxyList);
             GroupProxy groupClient = groupLoadBalance.chooseGroupServer();
             ServersContext.get().setClients(groupClient.getClients());
             return groupClient.chooseClient();

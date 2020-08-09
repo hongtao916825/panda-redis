@@ -28,6 +28,10 @@ public class GroupProxy {
         clients = new ArrayList<>();
     }
 
+    public GroupProxy(String id){
+        // 每一个集群生成一个id
+        clients = new ArrayList<>();
+    }
 
     public List<Client> getClients() {
         return clients;

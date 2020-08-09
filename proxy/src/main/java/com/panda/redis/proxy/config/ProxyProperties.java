@@ -13,6 +13,12 @@ import java.util.List;
 @Component
 public class ProxyProperties {
 
+    @Value("${server.groupId}")
+    private String groupId;
+
+    @Value("${server.registerAddress}")
+    private String registerAddress;
+
     @Value("${redis.cluster:single}")
     private String cluster;
 
