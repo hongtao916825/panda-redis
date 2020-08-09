@@ -5,7 +5,7 @@ panda:
     max-idle: 20
     max-wait: -1
     groupLoadBalance: com.panda.redis.core.loadBalance.impl.KeyHashLoadBalance
-    registerAddress: zookeeper:47.97.215.217:2181
+    registerAddress: zookeeper:127.0.0.1:2181
 #    group-proxies[0]:
 #      nodes[0]: 127.0.0.1:6061
 #      nodes[1]: 127.0.0.1:6062
