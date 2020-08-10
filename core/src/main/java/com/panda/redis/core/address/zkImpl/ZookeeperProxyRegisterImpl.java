@@ -29,8 +29,6 @@ public class ZookeeperProxyRegisterImpl implements ProxyLoader, ApplicationConte
 
     private static final String PREFIX = "zookeeper:";
 
-    @Autowired
-    private PandaJedisPool pandaJedisPool;
     @Override
     public void initRegister(){
         String registerAddress = pandaRedisProperties.getRegisterAddress();
@@ -41,7 +39,6 @@ public class ZookeeperProxyRegisterImpl implements ProxyLoader, ApplicationConte
     @Override
     public void loadAddress() {
         List<String> groupList = curatorCrud.getChildren(ProxyConstants.GROUP_REGISTER);
-        ProxyLoadBalance proxyLoadBalance = (ProxyLoadBalance) applicationContext.getBean("proxyLoadBalance");
         Assert.notEmpty(groupList,"no group list");
         List<GroupProxy> groupProxyList = new ArrayList<>();
         Map<String, GroupProxy> groupProxyMap = new HashMap<>();
@@ -53,6 +50,7 @@ public class ZookeeperProxyRegisterImpl implements ProxyLoader, ApplicationConte
                 groupProxyMap.put(groupPath, groupProxy);
                 this.registerProxiesListener(groupPath);
             }
+            ProxyLoadBalance proxyLoadBalance = (ProxyLoadBalance) applicationContext.getBean("proxyLoadBalance");
             groupProxy.setProxyLoadBalanceRule(proxyLoadBalance);
             List<String> proxyList = curatorCrud.getChildren(groupPath);
             groupProxy.reflushClients(proxyList, groupPath);
@@ -62,12 +60,16 @@ public class ZookeeperProxyRegisterImpl implements ProxyLoader, ApplicationConte
         Assert.notEmpty(groupProxyList,"no proxy list");
         ProxyLoaderContext.groupProxyMap.putAll(groupProxyMap);
         ProxyLoaderContext.reflushProxyList();
-        this.registerGroupListener(proxyLoadBalance);
+        this.registerGroupListener();
     }
 
-    private void registerGroupListener(ProxyLoadBalance proxyLoadBalance) {
+    /**
+     * 注册集群监听
+     */
+    private void registerGroupListener() {
         try {
             curatorCrud.lister(ProxyConstants.GROUP_REGISTER, (changedParams)->{
+                ProxyLoadBalance proxyLoadBalance = (ProxyLoadBalance) applicationContext.getBean("proxyLoadBalance");
                 List<String> childPath = changedParams.getChildPath();
                 ProxyLoaderContext.addGroup(changedParams.getParentPath(), childPath, proxyLoadBalance);
             });
@@ -77,6 +79,10 @@ public class ZookeeperProxyRegisterImpl implements ProxyLoader, ApplicationConte
 
     }
 
+    /**
+     * 注册集群代理监听
+     * @param path
+     */
     @Override
     public void registerProxiesListener(String path) {
         try {

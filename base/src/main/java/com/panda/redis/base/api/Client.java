@@ -21,6 +21,12 @@ import com.panda.redis.base.connection.Connection;
 import com.panda.redis.base.constants.ProxyConstants;
 import com.panda.redis.base.protocol.Protocol;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolAbstract;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.SSLSocketFactory;
 
 /***
  * 就是给程序员提供API接口的
@@ -30,6 +36,8 @@ public class Client extends Jedis {
 
    private Connection connection;
 
+   private String address;
+
    public Client(String host,int port) {
       connection=new Connection(host,port);
    }
@@ -37,6 +45,11 @@ public class Client extends Jedis {
    public Client(String address) {
       String[] nodes = address.split(ProxyConstants.NODE_PREFIX);
       connection=new Connection(nodes[0],Integer.valueOf(nodes[1]));
+   }
+
+   public Client(String host, int port, int connectionTimeout, int soTimeout, boolean ssl, SSLSocketFactory sslSocketFactory, SSLParameters sslParameters, HostnameVerifier hostnameVerifier) {
+      super(host, port, connectionTimeout, soTimeout,
+              ssl, sslSocketFactory, sslParameters, hostnameVerifier);
    }
 
    /**
@@ -73,18 +86,19 @@ public class Client extends Jedis {
       return  connection.getStatusReply();
    }
 
-
    /**
     * Get the value of the specified key. If the key does not exist null is returned. If the value
     * stored at key is not a string an error is returned because GET can only handle string values.
     * <p>
     * Time complexity: O(1)
-    * @param key
     * @return Bulk reply
     */
-   @Override
-   public String ping(final String key) {
-      connection.sendCommand(Protocol.Command.GET,SafeEncode.encode(key));
-      return  connection.getStatusReply();
+
+   public String getAddress() {
+      return address;
+   }
+
+   public void setAddress(String address) {
+      this.address = address;
    }
 }

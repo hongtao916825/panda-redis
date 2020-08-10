@@ -1,18 +1,18 @@
 package com.panda.redis.proxy.config;
 
 import com.panda.redis.proxy.base.NettyServer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.PathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.Enumeration;
 import java.util.Properties;
@@ -22,6 +22,7 @@ import java.util.Properties;
 })
 @Configuration
 @Import(NettyServer.class)
+@Slf4j
 public class AppConfig {
 
     @Bean
@@ -34,6 +35,20 @@ public class AppConfig {
         configurer.setProperties(properties);
         configurer.setLocalOverride(true);
         return configurer;
+    }
+
+
+    @Bean
+    public JedisPool createJedisPool(PandaRedisProperties pandaRedisProperties, ProxyProperties proxyProperties) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        log.info("加载jedis连接池");
+        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+        jedisPoolConfig.setMaxTotal(pandaRedisProperties.getMaxTotal());
+        jedisPoolConfig.setMaxIdle(pandaRedisProperties.getMaxIdel());
+        jedisPoolConfig.setMinIdle(pandaRedisProperties.getMinIdel());
+        jedisPoolConfig.setTestOnBorrow(pandaRedisProperties.isTestOnBorrow());
+        jedisPoolConfig.setTestOnReturn(pandaRedisProperties.isTestOnRetrun());
+        JedisPool jedisPool = new JedisPool(jedisPoolConfig, proxyProperties.getNodes().get(0).split(":")[0],Integer.valueOf(proxyProperties.getNodes().get(0).split(":")[1]));
+        return jedisPool;
     }
 
 

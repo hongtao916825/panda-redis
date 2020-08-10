@@ -25,8 +25,8 @@ public class ProxyProperties {
     @Value("#{'${redis.nodes}'.split(',')}")
     private List<String> nodes;
 
-    @Value("${redis.password:single:null}")
-    private String password;
+//    @Value("${redis.password:single:null}")
+//    private String password;
 
     @Value("${redis.database:0}")
     private Integer database;
@@ -37,7 +37,13 @@ public class ProxyProperties {
     @Value("${server.enable.redundant:false}")
     private Boolean enableRedundant;
 
-    @Value("${server.workThread:0}")
+    @Value("${server.workThread:1}")
     private Integer workThread;
+
+    @Value("${server.workThread:1}")
+    private Integer bossThread;
+
+    @Value("${server.enable.health-report:false}")
+    private Boolean healthReport;
 
 }

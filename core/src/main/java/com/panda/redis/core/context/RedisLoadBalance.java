@@ -37,7 +37,7 @@ public class RedisLoadBalance {
             ServersContext.put(serversContext);
         }
         serversContext.setKey(key);
-        serversContext.setKey(value);
+        serversContext.setValue(value);
     }
 
 

@@ -51,30 +51,5 @@ public class PandaConfiguration implements ApplicationContextAware {
         this.applicationContext = applicationContext;
     }
 
-//    @PostConstruct
-//    public void setClientLoadbalance() throws Exception {
-//        pandaRedisProperties.getGroupProxies().forEach(k ->{
-//            String clientLoadBalanceName = k.getClientLoadBalance();
-//            if(StringUtils.isEmpty(clientLoadBalanceName)){
-//                clientLoadBalanceName = DEFAULT_PROXY_LOADBALANCE;
-//            }
-//            try {
-//                Class clazz = Class.forName(clientLoadBalanceName);
-//                ProxyLoadBalance proxyLoadBalance = (ProxyLoadBalance)clazz.newInstance();
-//                applicationContext.getAutowireCapableBeanFactory().autowireBean(proxyLoadBalance);
-//                k.setProxyLoadBalanceRule(proxyLoadBalance);
-//            } catch (ClassNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IllegalAccessException e) {
-//                e.printStackTrace();
-//            } catch (InstantiationException e) {
-//                e.printStackTrace();
-//            }
-//
-//        });
-//
-//    }
-
-
 
 }

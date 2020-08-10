@@ -2,9 +2,7 @@ package com.panda.redis.core.properties;
 
 import com.panda.redis.base.api.Client;
 import com.panda.redis.core.address.ProxyLoaderContext;
-import com.panda.redis.core.context.ServersContext;
 import com.panda.redis.core.loadBalance.ProxyLoadBalance;
-import com.sun.xml.internal.ws.api.policy.PolicyResolver;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 

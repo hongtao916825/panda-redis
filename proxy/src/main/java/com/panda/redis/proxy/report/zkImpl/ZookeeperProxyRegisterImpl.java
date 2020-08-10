@@ -3,15 +3,10 @@ package com.panda.redis.proxy.report.zkImpl;
 import com.panda.redis.base.constants.ProxyConstants;
 import com.panda.redis.proxy.config.ProxyProperties;
 import com.panda.redis.proxy.report.ProxyRegister;
-import com.panda.redis.proxy.report.context.RegisterContext;
 import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.ZooKeeper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -25,21 +20,14 @@ public class ZookeeperProxyRegisterImpl implements ProxyRegister {
 
     private static final String PREFIX = "zookeeper:";
 
-    @PostConstruct
-    public void addRegister(){
-        RegisterContext.addProxyRegister(PREFIX, this);
-
-    }
+//    @PostConstruct
+//    public void addRegister(){
+//        RegisterContext.addProxyRegister(PREFIX, this);
+//
+//    }
 
     @Override
     public void initRegister(){
-//        String registerAddress = proxyProperties.getRegisterAddress();
-//        String connectString = registerAddress.replace("zookeeper:", "");
-//        try {
-//            zookeeper=new ZooKeeper(connectString,5000,null);
-//        } catch (IOException e) {
-//            throw new RuntimeException("init fail", e);
-//        }
         String registerAddress = proxyProperties.getRegisterAddress();
         String connectString = registerAddress.replace(PREFIX, "");
         curatorCrud = new CuratorCrud(connectString);
@@ -78,13 +66,10 @@ public class ZookeeperProxyRegisterImpl implements ProxyRegister {
                 this.register();
             }
         } catch (KeeperException e) {
-            e.printStackTrace();
             throw new RuntimeException("register fail", e);
         } catch (InterruptedException e) {
-            e.printStackTrace();
             throw new RuntimeException("register fail", e);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException("register fail", e);
         }
     }
