@@ -36,13 +36,19 @@ public class NettyServer implements ApplicationContextAware {
                     .channel(NioServerSocketChannel.class) //使用NioServerSocketChannel作为服务器的通道实现
                     // 初始化服务器连接队列大小，服务端处理客户端连接请求是顺序处理的,所以同一时间只能处理一个客户端连接。
                     // 多个客户端同时来的时候,服务端将不能处理的客户端连接请求放在队列中等待处理
-                    .option(ChannelOption.SO_BACKLOG, 1024)
+                    .option(ChannelOption.SO_BACKLOG, 2048)  // socket接受队列大小
+                    .option(ChannelOption.SO_REUSEADDR, true) // 避免端口冲突
+                    .option(ChannelOption.TCP_NODELAY, true) // 关闭小流合并，保证消息的及时性
+                    .childOption(ChannelOption.SO_KEEPALIVE, true) // 长时间没动静的链接自动关闭
                     .childHandler(new ChannelInitializer<SocketChannel>() {//创建通道初始化对象，设置初始化参数
 
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             //对workerGroup的SocketChannel设置处理器
                             ch.pipeline().addLast(ctx.getBean(NettyServerHandler.class));
+//                            ch.pipeline()
+//                                    .addLast(new IdleStateHandler(60,60,180))
+//                                    .addLast(new MessageEncoder());
                         }
                     });
             System.out.println("netty server start。。");

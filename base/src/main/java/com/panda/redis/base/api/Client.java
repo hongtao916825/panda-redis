@@ -77,6 +77,11 @@ public class Client extends Jedis {
       return  connection.getStatusReply();
    }
 
+   public byte[] send2(final byte[] b) {
+      connection.sendCommand(b);//TODO 发送数据
+      return  connection.getStatusReply2();
+   }
+
    /**
     * Get the value of the specified key. If the key does not exist null is returned. If the value
     * stored at key is not a string an error is returned because GET can only handle string values.

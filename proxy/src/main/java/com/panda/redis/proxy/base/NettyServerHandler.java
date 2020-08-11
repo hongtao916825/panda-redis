@@ -1,10 +1,13 @@
 package com.panda.redis.proxy.base;
 
 import com.panda.redis.base.api.Client;
+import com.panda.redis.base.connection.SendThread;
+import com.panda.redis.base.threadPoolCommon.HeartBeatExecutorService;
 import com.panda.redis.base.threadPoolCommon.HeartBeatThreadPoolExecutor;
 import com.panda.redis.proxy.config.ProxyProperties;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
@@ -17,10 +20,8 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Protocol;
 import redis.clients.jedis.commands.ProtocolCommand;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * 自定义Handler需要继承netty规定好的某个HandlerAdapter(规范)
@@ -29,8 +30,8 @@ import java.util.concurrent.Future;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
-    @Autowired
-    private JedisPool jedisPool;
+//    @Autowired
+//    private JedisPool jedisPool;
 
     @Autowired
     private ProxyProperties proxyProperties;
@@ -53,17 +54,13 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             //将 msg 转成一个 ByteBuf，类似NIO 的 ByteBuffer
             ByteBuf buf = (ByteBuf) msg;
             String req = buf.toString(CharsetUtil.UTF_8);
+            Channel channel = ctx.channel();
+            HeartBeatThreadPoolExecutor.execute(new SendThread(channel, proxyProperties.getNodes().get(0), req.getBytes()));
 //            Future<String> future = HeartBeatThreadPoolExecutor.submit(() -> {
 //                return new Client(proxyProperties.getNodes().get(0)).send(req.getBytes());
 //            });
-            String replay = new Client(proxyProperties.getNodes().get(0)).send(req.getBytes());
-//            String replay = future.get();
-            //注意指定编码格式，发送方和接收方一定要统一，建议使用UTF-8
-            ByteBuf respBuf = Unpooled.copiedBuffer((replay.trim()+"\r\n").getBytes(CharsetUtil.UTF_8));
-            ctx.writeAndFlush(respBuf);
         } finally {
-            //将内容返回到客户端
-            ctx.channel().close(); //关闭连接
+
         }
     }
 

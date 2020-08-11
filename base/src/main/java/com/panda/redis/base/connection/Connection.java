@@ -99,4 +99,14 @@ public class Connection {
         return null;
 
     }
+
+    public byte[] getStatusReply2() {
+        byte b[]=new byte[1024];
+        try {
+            socket.getInputStream().read(b);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return b;
+    }
 }

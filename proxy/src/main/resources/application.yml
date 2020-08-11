@@ -2,18 +2,18 @@
 redis:
   cluster: single
   #redis节点id
-  nodes: 47.97.215.217:6061
+  nodes: 127.0.0.1:6379
 #redis.database=0
 #redis.password=
 #是否开启key的多节点冗余
 server:
   enable:
     redundant: false
-    health-report: true
+    health-report: false
     # 只有在Health-report为true的时候才有效
     delay: 3
   bindPort: 6067
-  workThread: 10
+  workThread: 30
   bossThread: 10
   groupId: 1
   registerAddress: zookeeper:47.97.215.217:2181
