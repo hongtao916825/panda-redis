@@ -1,12 +1,14 @@
 package com.panda.redis.core.address.zkImpl;
 
+import com.panda.redis.base.common.LogUtil;
 import com.panda.redis.base.constants.ProxyConstants;
 import com.panda.redis.core.address.ProxyLoader;
 import com.panda.redis.core.address.ProxyLoaderContext;
-import com.panda.redis.core.context.PandaJedisPool;
 import com.panda.redis.core.loadBalance.ProxyLoadBalance;
 import com.panda.redis.core.properties.GroupProxy;
 import com.panda.redis.core.properties.PandaRedisProperties;
+import org.apache.curator.framework.recipes.cache.ChildData;
+import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -14,10 +16,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Path;
+import java.util.*;
 
 @Service
 public class ZookeeperProxyRegisterImpl implements ProxyLoader, ApplicationContextAware {
@@ -48,7 +48,7 @@ public class ZookeeperProxyRegisterImpl implements ProxyLoader, ApplicationConte
             if(groupProxy == null){
                 groupProxy = new GroupProxy();
                 groupProxyMap.put(groupPath, groupProxy);
-                this.registerProxiesListener(groupPath);
+                ZookeeperContext.addToRegister(groupPath);
             }
             ProxyLoadBalance proxyLoadBalance = (ProxyLoadBalance) applicationContext.getBean("proxyLoadBalance");
             groupProxy.setProxyLoadBalanceRule(proxyLoadBalance);
@@ -60,41 +60,64 @@ public class ZookeeperProxyRegisterImpl implements ProxyLoader, ApplicationConte
         Assert.notEmpty(groupProxyList,"no proxy list");
         ProxyLoaderContext.groupProxyMap.putAll(groupProxyMap);
         ProxyLoaderContext.reflushProxyList();
-        this.registerGroupListener();
     }
 
-    /**
-     * 注册集群监听
-     */
-    private void registerGroupListener() {
-        try {
-            curatorCrud.lister(ProxyConstants.GROUP_REGISTER, (changedParams)->{
-                ProxyLoadBalance proxyLoadBalance = (ProxyLoadBalance) applicationContext.getBean("proxyLoadBalance");
-                List<String> childPath = changedParams.getChildPath();
-                ProxyLoaderContext.addGroup(changedParams.getParentPath(), childPath, proxyLoadBalance);
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-    }
 
     /**
-     * 注册集群代理监听
-     * @param path
+     * 注册大集群监听，监听集群变化
      */
     @Override
-    public void registerProxiesListener(String path) {
+    public void registerProxiesListener() {
         try {
-            curatorCrud.lister(path, (changedParams)->{
-                String parentPath = changedParams.getParentPath();
-                List<String> childPath = changedParams.getChildPath();
-                GroupProxy groupProxy = ProxyLoaderContext.groupProxyMap.get(parentPath);
-                groupProxy.reflushClients(childPath, parentPath);
+            curatorCrud.listen(ProxyConstants.GROUP_REGISTER, (treeCacheEvent)->{
+                TreeCacheEvent.Type eventType = treeCacheEvent.getType();
+                ChildData data = treeCacheEvent.getData();
+                switch (eventType) {
+                    case NODE_ADDED:
+                        LogUtil.info("NODE_ADDED : " + data.getPath() + "  数据:" + new String(data.getData()));
+                        addGroupOrProxies(data);
+                        break;
+                    case NODE_REMOVED:
+                        LogUtil.info("NODE_REMOVED : " + data.getPath() + "  数据:" + new String(data.getData()));
+                        removeGroupOrProxies(data);
+                        break;
+//                    case NODE_UPDATED:
+//                        System.out.println("NODE_UPDATED : " + data.getPath() + "  数据:" + new String(data.getData()));
+//                        break;
+                    default:
+                        break;
+                }
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.error("syn group fail", e);
         }
+
+    }
+
+    /**
+     * 移除proxy
+     * @param data
+     */
+    private void removeGroupOrProxies(ChildData data) {
+        String path = data.getPath();
+        String group = path.substring(0, path.lastIndexOf("/"));
+        GroupProxy groupProxy = ProxyLoaderContext.groupProxyMap.get(group);
+        List<String> children = curatorCrud.getChildren(group);
+        groupProxy.reflushClients(children, group);
+    }
+
+    /**
+     * 添加
+     * @param data
+     */
+    private void addGroupOrProxies(ChildData data){
+        ProxyLoadBalance proxyLoadBalance = (ProxyLoadBalance) applicationContext.getBean("proxyLoadBalance");
+        String path = data.getPath();
+        String group = path.substring(0, path.lastIndexOf("/"));
+        List<String> children = curatorCrud.getChildren(group);
+        ProxyLoaderContext.addGroup(path, children, proxyLoadBalance);
+        ProxyLoaderContext.reflushProxyList();
     }
 
     private ApplicationContext applicationContext;

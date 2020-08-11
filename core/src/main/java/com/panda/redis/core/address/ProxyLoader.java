@@ -8,5 +8,5 @@ public interface ProxyLoader {
 
     void loadAddress();
 
-    void registerProxiesListener(String path);
+    void registerProxiesListener();
 }

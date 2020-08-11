@@ -40,10 +40,13 @@ public class ProxyProperties {
     @Value("${server.workThread:1}")
     private Integer workThread;
 
-    @Value("${server.workThread:1}")
+    @Value("${server.bossThread:1}")
     private Integer bossThread;
 
     @Value("${server.enable.health-report:false}")
     private Boolean healthReport;
+
+    @Value("${server.enable.delay:10}")
+    private Integer delay;
 
 }

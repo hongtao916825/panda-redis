@@ -1,0 +1,14 @@
+server:
+  servlet:
+    context-path: /dash
+  port: 8087
+spring:
+  thymeleaf:
+    suffix: .html
+    encoding: utf-8
+    servlet:
+      content-type: text/html
+    cache: false
+panda:
+  redis:
+    registerAddress: zookeeper:47.97.215.217:2181

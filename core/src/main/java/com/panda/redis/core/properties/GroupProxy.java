@@ -82,11 +82,11 @@ public class GroupProxy {
     public void reflushClients(List<String> childPath,String path) {
         synchronized (this){
             this.getClients().clear();
-            if(childPath.isEmpty()){
-                // 没有proxy，剔除集群
-                ProxyLoaderContext.removeGroup(path);
-            }
-            childPath.stream().map(Client :: new).forEach(this.getClients()::add);
+//            if(childPath.isEmpty()){
+//                // 没有proxy，剔除集群
+//                ProxyLoaderContext.removeGroup(path);
+//            }
+            childPath.stream().map(Client::new).forEach(this.getClients()::add);
         }
     }
 }

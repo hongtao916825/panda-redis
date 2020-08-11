@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="Generator" content="EditPlus®">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <title>Document</title>
+  <link rel="stylesheet" href="../static/styles/public.min.css">
+  <script src="../static/scripts/libs/jquery-3.4.1.min.js"></script>
+  <script src="../static/scripts/libs/fastclick.js"></script>
+  <script src="../static/scripts/libs/weui.min.js"></script>
+  <script src="../static/scripts/common.js"></script>
+  <script src="../static/scripts/action.js"></script>
+ </head>
+ <body>
+    <div  id="health">
+    </div>
+ </body>
+</html>
+<script>
+	var eventSource = new EventSource("http://localhost:8087/dash/health/subscribe?id=111166");
+	eventSource.addEventListener("open", function (e) {
+		// console.info(e);
+	})
+	eventSource.addEventListener("message", function (e) {
+        // console.info(e);
+        $("#health").append(e.data);
+        $("#health").append("<br/>");
+	})
+</script>

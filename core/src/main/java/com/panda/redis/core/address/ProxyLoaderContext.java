@@ -39,7 +39,8 @@ public class ProxyLoaderContext {
         lock.lock();
         try {
             groupProxyList = null;
-            groupProxyList = new ArrayList<>(groupProxyMap.values());
+            groupProxyList = groupProxyMap.values().stream()
+                    .filter(k -> !k.getClients().isEmpty()).collect(Collectors.toList());
         }finally {
             lock.unlock();
         }
@@ -55,6 +56,12 @@ public class ProxyLoaderContext {
         }
     }
 
+    /**
+     *
+     * @param groupPath 集群
+     * @param clientPaths 代理
+     * @param proxyLoadBalance 负载均衡
+     */
     public static void addGroup(String groupPath, List<String> clientPaths, ProxyLoadBalance proxyLoadBalance) {
         if(!clientPaths.isEmpty()){
             List<Client> clients = clientPaths.stream().map(Client::new).collect(Collectors.toList());

@@ -39,12 +39,17 @@ public class Client extends Jedis {
    private String address;
 
    public Client(String host,int port) {
+      super(host, port);
       connection=new Connection(host,port);
+      this.address = host + ":" + port;
    }
 
    public Client(String address) {
-      String[] nodes = address.split(ProxyConstants.NODE_PREFIX);
-      connection=new Connection(nodes[0],Integer.valueOf(nodes[1]));
+      super(address.split(ProxyConstants.NODE_PREFIX)[0], Integer.valueOf(address.split(ProxyConstants.NODE_PREFIX)[1]));
+      String host = address.split(ProxyConstants.NODE_PREFIX)[0];
+      int port = Integer.parseInt(address.split(ProxyConstants.NODE_PREFIX)[1]);
+      this.address = address;
+      connection=new Connection(host,port);
    }
 
    public Client(String host, int port, int connectionTimeout, int soTimeout, boolean ssl, SSLSocketFactory sslSocketFactory, SSLParameters sslParameters, HostnameVerifier hostnameVerifier) {

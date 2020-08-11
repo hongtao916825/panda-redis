@@ -33,7 +33,7 @@ public class ProxyRegisterCreation implements BeanDefinitionRegistryPostProcesso
 
     static {
         PROXY_REGISTER_MAP.put("zookeeper:", "com.panda.redis.proxy.report.zkImpl.ZookeeperProxyRegisterImpl");
-        PROXY_HEALTH_MAP.put("zookeeper:", "health.zkImpl.ZookeeperHealthReport");
+        PROXY_HEALTH_MAP.put("zookeeper:", "com.panda.redis.proxy.health.zkImpl.ZookeeperHealthReport");
     }
 
 
@@ -51,7 +51,7 @@ public class ProxyRegisterCreation implements BeanDefinitionRegistryPostProcesso
             Assert.notNull(registerBeanName, "no register bean");
             RootBeanDefinition beanDefinition = new RootBeanDefinition(Class.forName(registerBeanName));
             beanDefinitionRegistry.registerBeanDefinition("proxyRegister",beanDefinition);
-            Boolean healthReport = Boolean.valueOf(properties.getProperty("server.enable.health-report"));
+            Boolean healthReport = Boolean.valueOf(properties.getProperty("server.enable.com.panda.redis.proxy.health-report"));
             if(healthReport) {
                 String healthBeanName = PROXY_HEALTH_MAP.get(prefix);
                 Assert.notNull(healthBeanName, "no register bean");

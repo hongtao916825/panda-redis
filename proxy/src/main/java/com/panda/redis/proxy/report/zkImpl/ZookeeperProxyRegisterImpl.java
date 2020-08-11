@@ -20,11 +20,6 @@ public class ZookeeperProxyRegisterImpl implements ProxyRegister {
 
     private static final String PREFIX = "zookeeper:";
 
-//    @PostConstruct
-//    public void addRegister(){
-//        RegisterContext.addProxyRegister(PREFIX, this);
-//
-//    }
 
     @Override
     public void initRegister(){
@@ -38,7 +33,6 @@ public class ZookeeperProxyRegisterImpl implements ProxyRegister {
         try {
             Boolean exists = curatorCrud.exists(ProxyConstants.GROUP_REGISTER);
             if(exists){
-//                curatorCrud.setData(ProxyConstants.GROUP_REGISTER + "/" + proxyProperties.getGroupId(), InetAddress.getLocalHost().getHostAddress()+":" + proxyProperties.getBindPort());
                 if(!curatorCrud.exists(ProxyConstants.GROUP_REGISTER + "/" + proxyProperties.getGroupId())){
                     if(curatorCrud.lock(ProxyConstants.GROUP_REGISTER_LOCK + proxyProperties.getGroupId())){
                         // 临时节点下不能创建子节点
@@ -54,13 +48,15 @@ public class ZookeeperProxyRegisterImpl implements ProxyRegister {
                         } catch (UnknownHostException e) {
                             e.printStackTrace();
                             throw new RuntimeException("register fail", e);
+                        } catch (Exception e){
+                            e.printStackTrace();
                         }
                     });
                 }
             }else {
                 Boolean lock = curatorCrud.lock(ProxyConstants.GROUP_REGISTER_LOCK);
                 if(lock){
-                    curatorCrud.createPersistent(ProxyConstants.GROUP_REGISTER, "lock");
+                    curatorCrud.createPersistent(ProxyConstants.GROUP_REGISTER, "online");
                     curatorCrud.unlock(ProxyConstants.GROUP_REGISTER_LOCK);
                 }
                 this.register();
