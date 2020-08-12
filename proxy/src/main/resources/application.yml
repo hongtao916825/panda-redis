@@ -16,4 +16,4 @@ server:
   workThread: 30
   bossThread: 10
   groupId: 1
-  registerAddress: zookeeper:47.97.215.217:2181
+  registerAddress: zookeeper:127.0.0.1:2181
