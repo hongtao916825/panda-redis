@@ -51,7 +51,7 @@ public abstract class AbstractHealthReporter implements HealthReporter {
             }
             try {
                 long startTime = System.currentTimeMillis();   //获取开始时间
-                String pong = client.ping();
+                client.ping();
                 long endTime = System.currentTimeMillis(); //获取结束时间
                 return healthReportInfoBuilder.setTimeDelay(endTime - startTime)
                         .setHealth(true)

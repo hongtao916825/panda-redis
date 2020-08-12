@@ -25,7 +25,7 @@ public class PandaConfiguration implements ApplicationContextAware {
 
     @Bean
 //    @ConditionalOnProperty(prefix = PandaRedisProperties.PANDAREDIS_PREFIX,name = "USEHA",havingValue ="false")
-    public JedisPool createJedisPool() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public PandaJedisPool createJedisPool() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         log.info("加载jedis连接池");
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxTotal(pandaRedisProperties.getMaxTotal());

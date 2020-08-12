@@ -53,7 +53,8 @@ public class PandaJedisPool extends JedisPool {
 
     @Override
     public Jedis getResource() {
-        return chooseClient();
+//        return chooseClient();
+        return null;
     }
 
     @Override

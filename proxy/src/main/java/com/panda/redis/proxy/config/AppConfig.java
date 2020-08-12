@@ -42,7 +42,7 @@ public class AppConfig {
     public JedisPool createJedisPool(PandaRedisProperties pandaRedisProperties, ProxyProperties proxyProperties) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         log.info("加载jedis连接池");
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setMaxTotal(pandaRedisProperties.getMaxTotal());
+        jedisPoolConfig.setMaxTotal(100);
         jedisPoolConfig.setMaxIdle(pandaRedisProperties.getMaxIdel());
         jedisPoolConfig.setMinIdle(pandaRedisProperties.getMinIdel());
         jedisPoolConfig.setTestOnBorrow(pandaRedisProperties.isTestOnBorrow());
