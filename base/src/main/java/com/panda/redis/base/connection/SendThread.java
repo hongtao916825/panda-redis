@@ -12,8 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SendThread implements Runnable{
 
-    private static final Map<Long, Client> CLIENT_CACHE = new ConcurrentHashMap<>(10000);
-
+//    private static final Map<Long, Client> CLIENT_CACHE = new ConcurrentHashMap<>(10000);
+    private static ThreadLocal<Client> CLIENT_CACHE = new ThreadLocal<>();
     private Channel channel;
 
     private String node;
@@ -32,10 +32,10 @@ public class SendThread implements Runnable{
     @Override
     public void run() {
         try {
-            Client client = CLIENT_CACHE.get(Thread.currentThread().getId());
+            Client client = CLIENT_CACHE.get();
             if(client == null){
                 client = new Client(node);
-                CLIENT_CACHE.put(Thread.currentThread().getId(), client);
+                CLIENT_CACHE.set(client);
             }
             String replay = client.send(req);
             //注意指定编码格式，发送方和接收方一定要统一，建议使用UTF-8
