@@ -47,8 +47,8 @@ public class NettyServer implements ApplicationContextAware {
                             //对workerGroup的SocketChannel设置处理器
                             ch.pipeline()
                                     .addLast(ctx.getBean(RedisCommandDecoder.class))
-                                    .addLast(ctx.getBean(RedisReplyEncoder.class))
                                     .addLast(ctx.getBean(NettyServerHandler.class))
+                                    .addLast(ctx.getBean(RedisReplyEncoder.class))
                                     ;
 //                            ch.pipeline()
 //                                    .addLast(new IdleStateHandler(60,60,180))

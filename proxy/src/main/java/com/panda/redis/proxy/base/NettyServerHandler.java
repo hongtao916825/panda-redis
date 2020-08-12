@@ -23,9 +23,6 @@ import redis.clients.jedis.Protocol;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NettyServerHandler extends SimpleChannelInboundHandler<RedisCommand> {
 
-//    @Autowired
-//    private JedisPool jedisPool;
-
     @Autowired
     private ProxyProperties proxyProperties;
 
@@ -36,71 +33,23 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RedisCommand
     }
 
 
-//    /**
-//     * 读取客户端发送的数据
-//     *
-//     * @param ctx 上下文对象, 含有通道channel，管道pipeline
-//     * @param msg 就是客户端发送的数据
-//     * @throws Exception
-//     */
-//    @Override
-//    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-//        try {
-//            System.out.println("服务器读取线程 " + Thread.currentThread().getName());
-//            //将 msg 转成一个 ByteBuf，类似NIO 的 ByteBuffer
-//            ByteBuf buf = (ByteBuf) msg;
-//            String req = buf.toString(CharsetUtil.UTF_8);
-//            Channel channel = ctx.channel();
-//            HeartBeatThreadPoolExecutor.execute(new SendThread(channel, proxyProperties.getNodes().get(0), req.getBytes()));
-////            Future<String> future = HeartBeatThreadPoolExecutor.submit(() -> {
-////                return new Client(proxyProperties.getNodes().get(0)).send(req.getBytes());
-////            });
-//        } finally {
-//
-//        }
-//    }
-
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RedisCommand cmd) throws Exception {
-//        try {
-//            System.out.println("服务器读取线程 " + Thread.currentThread().getName());
-//            //将 msg 转成一个 ByteBuf，类似NIO 的 ByteBuffer
-////            ByteBuf buf = (ByteBuf) msg;
-////            String req = buf.toString(CharsetUtil.UTF_8);
-//            Channel channel = ctx.channel();
-//            HeartBeatThreadPoolExecutor.execute(new SendThread(channel, proxyProperties.getNodes().get(0), redisCommand, jedisPool));
-////            Future<String> future = HeartBeatThreadPoolExecutor.submit(() -> {
-////                return new Client(proxyProperties.getNodes().get(0)).send(req.getBytes());
-////            });
-
             Jedis jedis = jedisPool.getResource();
             try {
                 if (cmd.getName().equalsIgnoreCase("set")) {
                     Object o = jedis.sendCommand(Protocol.Command.SET, cmd.getArg1(), cmd.getArg2());
-                    ctx.writeAndFlush(new BulkReply((byte[])o));
-//                    String replay = new String((byte[])o);
-//                    int length = replay.length();
-//                    String s = "$" + length  + "\r\n" + replay.trim() + "\r\n";
-//                    ByteBuf respBuf = Unpooled.copiedBuffer((s.trim()).getBytes(CharsetUtil.UTF_8));
-//                    ctx.writeAndFlush(respBuf);
+                    ctx.channel().writeAndFlush(new BulkReply((byte[])o));
                 }
                 else if (cmd.getName().equalsIgnoreCase("get")) {
                     Object o = jedis.sendCommand(Protocol.Command.GET, cmd.getArg1());
-                    ctx.writeAndFlush(new BulkReply((byte[])o));
-//                    String replay = new String((byte[])o);
-//                    int length = replay.length();
-//                    String s = "$" + length  + "\r\n" + replay.trim() + "\r\n";
-//                    ByteBuf respBuf = Unpooled.copiedBuffer((s).getBytes(CharsetUtil.UTF_8));
-//                    ctx.writeAndFlush(respBuf);
+                    ctx.channel().writeAndFlush(new BulkReply((byte[])o));
                 }
             } finally {
                 //将内容返回到客户端
                 ctx.channel().close(); //关闭连接
                 jedis.close();
             }
-//        } finally {
-//
-//        }
     }
 
     /**
