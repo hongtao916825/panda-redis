@@ -3,12 +3,8 @@ package com.panda.redis.proxy.config;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
-@Data
 @Component
 public class PandaRedisProperties {
-
-    private String registerAddress;
-//    private String password;
 
     private Integer maxTotal=50;
 
@@ -22,26 +18,6 @@ public class PandaRedisProperties {
     private  boolean testOnBorrow = true;
     /**返回jedis到池中Jedis 实例都会经过测试*/
     private  boolean testOnRetrun = false;
-
-//    private String groupLoadBalance;
-
-//    private List<GroupProxy> groupProxies;
-
-//    public String getGroupLoadBalance() {
-//        return groupLoadBalance;
-//    }
-//
-//    public void setGroupLoadBalance(String groupLoadBalance) {
-//        this.groupLoadBalance = groupLoadBalance;
-//    }
-//
-//    public List<GroupProxy> getGroupProxies() {
-//        return groupProxies;
-//    }
-//
-//    public void setGroupProxies(List<GroupProxy> groupProxies) {
-//        this.groupProxies = groupProxies;
-//    }
 
     public Integer getMaxTotal() {
         return maxTotal;
@@ -91,11 +67,4 @@ public class PandaRedisProperties {
         this.testOnRetrun = testOnRetrun;
     }
 
-    public String getRegisterAddress() {
-        return registerAddress;
-    }
-
-    public void setRegisterAddress(String registerAddress) {
-        this.registerAddress = registerAddress;
-    }
 }

@@ -3,6 +3,7 @@ redis:
   cluster: single
   #redis节点id
   nodes: 127.0.0.1:6061
+#masterName
 #redis.database=0
 #redis.password=
 #是否开启key的多节点冗余

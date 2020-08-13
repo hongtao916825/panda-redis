@@ -9,9 +9,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Data
 @Component
 public class ProxyProperties {
+
+    @Value("${redis.masterName}")
+    private String masterName;
 
     @Value("${server.groupId}")
     private String groupId;
@@ -24,9 +26,6 @@ public class ProxyProperties {
 
     @Value("#{'${redis.nodes}'.split(',')}")
     private List<String> nodes;
-
-//    @Value("${redis.password:single:null}")
-//    private String password;
 
     @Value("${redis.database:0}")
     private Integer database;
@@ -49,4 +48,110 @@ public class ProxyProperties {
     @Value("${server.enable.delay:10}")
     private Integer delay;
 
+    @Value("${redis.password:''}")
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getRegisterAddress() {
+        return registerAddress;
+    }
+
+    public void setRegisterAddress(String registerAddress) {
+        this.registerAddress = registerAddress;
+    }
+
+    public String getCluster() {
+        return cluster;
+    }
+
+    public void setCluster(String cluster) {
+        this.cluster = cluster;
+    }
+
+    public List<String> getNodes() {
+        return nodes;
+    }
+
+    public void setNodes(List<String> nodes) {
+        this.nodes = nodes;
+    }
+
+    public Integer getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(Integer database) {
+        this.database = database;
+    }
+
+    public Integer getBindPort() {
+        return bindPort;
+    }
+
+    public void setBindPort(Integer bindPort) {
+        this.bindPort = bindPort;
+    }
+
+    public Boolean getEnableRedundant() {
+        return enableRedundant;
+    }
+
+    public void setEnableRedundant(Boolean enableRedundant) {
+        this.enableRedundant = enableRedundant;
+    }
+
+    public Integer getWorkThread() {
+        return workThread;
+    }
+
+    public void setWorkThread(Integer workThread) {
+        this.workThread = workThread;
+    }
+
+    public Integer getBossThread() {
+        return bossThread;
+    }
+
+    public void setBossThread(Integer bossThread) {
+        this.bossThread = bossThread;
+    }
+
+    public Boolean getHealthReport() {
+        return healthReport;
+    }
+
+    public void setHealthReport(Boolean healthReport) {
+        this.healthReport = healthReport;
+    }
+
+    public Integer getDelay() {
+        return delay;
+    }
+
+    public void setDelay(Integer delay) {
+        this.delay = delay;
+    }
+
+    public String getMasterName() {
+        return masterName;
+    }
+
+    public void setMasterName(String masterName) {
+        this.masterName = masterName;
+    }
 }
