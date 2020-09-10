@@ -2,7 +2,6 @@ package com.panda.redis.proxy.config;
 
 import com.panda.redis.proxy.report.ProxyRegister;
 import com.panda.redis.proxy.health.HealthReporter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -13,10 +12,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @Component
-@Slf4j
 public class ProxyRegisterListener implements ApplicationListener<ContextRefreshedEvent> {
-
-    private ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(10, new NamedThreadFactory("com.panda.redis.proxy.health-report"));
 
     @Autowired
     private ProxyRegister proxyRegister;
@@ -28,6 +24,7 @@ public class ProxyRegisterListener implements ApplicationListener<ContextRefresh
     private ProxyProperties proxyProperties;
 
     private void startThreadHealth() {
+        ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(10, new NamedThreadFactory("com.panda.redis.proxy.health-report"));
         scheduledExecutorService.scheduleWithFixedDelay(healthReporter, 0, proxyProperties.getDelay(), TimeUnit.SECONDS);
     }
 

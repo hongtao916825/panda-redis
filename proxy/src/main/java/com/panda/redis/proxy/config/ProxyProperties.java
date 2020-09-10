@@ -1,10 +1,6 @@
 package com.panda.redis.proxy.config;
 
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,7 +8,7 @@ import java.util.List;
 @Component
 public class ProxyProperties {
 
-    @Value("${redis.masterName}")
+    @Value("${redis.masterName:''}")
     private String masterName;
 
     @Value("${server.groupId}")

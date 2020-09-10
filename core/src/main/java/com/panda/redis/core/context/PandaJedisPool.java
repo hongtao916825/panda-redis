@@ -3,15 +3,14 @@ package com.panda.redis.core.context;
 import com.panda.redis.base.api.Client;
 import com.panda.redis.core.address.ProxyLoaderContext;
 import com.panda.redis.core.loadBalance.GroupLoadBalance;
-import com.panda.redis.core.properties.GroupProxy;
+import com.panda.redis.core.pojo.GroupProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisException;
-
-import java.util.List;
 
 /**
  * @author tao.hong
@@ -21,8 +20,6 @@ public class PandaJedisPool extends JedisPool {
 
     @Autowired
     private GroupLoadBalance groupLoadBalance;
-
-//    private List<GroupProxy> groupClientLists;
 
     public PandaJedisPool(){}
 
@@ -40,15 +37,15 @@ public class PandaJedisPool extends JedisPool {
      * todo 并发问题
      * @return
      */
-    private Client chooseClient() {
-        try {
-            ServersContext.get().setGroupClients(ProxyLoaderContext.getGroupProxyList());
-            GroupProxy groupClient = groupLoadBalance.chooseGroupServer();
-            ServersContext.get().setClients(groupClient.getClients());
-            return groupClient.chooseClient();
-        }finally {
-            ServersContext.remove();
-        }
+    private Jedis chooseClient() {
+        Assert.notEmpty(ProxyLoaderContext.getGroupProxyList(), "no server avliable");
+        ServersContext.get().setGroupClients(ProxyLoaderContext.getGroupProxyList());
+        GroupProxy groupProxy = groupLoadBalance.chooseGroupServer();
+        ServersContext.get().setProxies(groupProxy.getJedisPools().keySet());
+        String proxyAddress = groupProxy.chooseClient();
+        JedisPool jedisPool = groupProxy.getJedisPools().get(proxyAddress);
+        Assert.notNull(jedisPool, "proxyAddress can not be found in this group");
+        return jedisPool.getResource();
     }
 
     @Override

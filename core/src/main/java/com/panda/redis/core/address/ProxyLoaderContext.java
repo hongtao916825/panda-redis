@@ -2,7 +2,7 @@ package com.panda.redis.core.address;
 
 import com.panda.redis.base.api.Client;
 import com.panda.redis.core.loadBalance.ProxyLoadBalance;
-import com.panda.redis.core.properties.GroupProxy;
+import com.panda.redis.core.pojo.GroupProxy;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,41 +35,34 @@ public class ProxyLoaderContext {
         return groupProxyList;
     }
 
-    public static void reflushProxyList() {
+    public static void refreshGroupList() {
         lock.lock();
         try {
             groupProxyList = null;
             groupProxyList = groupProxyMap.values().stream()
-                    .filter(k -> !k.getClients().isEmpty()).collect(Collectors.toList());
+                    .filter(k -> !k.getJedisPools().isEmpty()).collect(Collectors.toList());
         }finally {
             lock.unlock();
         }
     }
 
-    public static void removeGroup(String path) {
+    public static void removeGroup(String groupId) {
         lock.lock();
         try {
-            proxyLoaderMap.remove(path);
-            reflushProxyList();
+            proxyLoaderMap.remove(groupId);
+            refreshGroupList();
         }finally {
             lock.unlock();
         }
     }
 
-    /**
-     *
-     * @param groupPath 集群
-     * @param clientPaths 代理
-     * @param proxyLoadBalance 负载均衡
-     */
-    public static void addGroup(String groupPath, List<String> clientPaths, ProxyLoadBalance proxyLoadBalance) {
-        if(!clientPaths.isEmpty()){
-            List<Client> clients = clientPaths.stream().map(Client::new).collect(Collectors.toList());
-            GroupProxy groupProxy = new GroupProxy();
-            groupProxy.addClients(clients);
-            groupProxy.setProxyLoadBalanceRule(proxyLoadBalance);
-            groupProxyMap.put(groupPath, groupProxy);
-            reflushProxyList();
-        }
-    }
+//    /**
+//     *
+//     * @param groupPath 集群
+//     * @param proxies 代理
+//     * @param proxyLoadBalance 负载均衡
+//     * @param groupId 集群id
+//     */
+//    public static void addGroup(String groupPath, List<String> proxies, ProxyLoadBalance proxyLoadBalance, String groupId) {
+//    }
 }

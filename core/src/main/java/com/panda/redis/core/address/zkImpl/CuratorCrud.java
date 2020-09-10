@@ -113,12 +113,7 @@ public class CuratorCrud {
 
    public void listen(String path, CallBackFunction<TreeCacheEvent> callback) throws Exception {
          TreeCache treeCache = new TreeCache(cf, path);
-         treeCache.getListenable().addListener(new TreeCacheListener() {
-            @Override
-            public void childEvent(CuratorFramework curatorFramework, TreeCacheEvent event) throws Exception {
-               callback.callBack(event);
-            }
-         });
+         treeCache.getListenable().addListener((curatorFramework, event) -> callback.callBack(event));
          treeCache.start();
    }
 

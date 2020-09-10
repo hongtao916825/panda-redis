@@ -2,9 +2,9 @@ package com.panda.redis.proxy.health;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.panda.redis.base.api.Client;
+import com.panda.redis.base.common.LogUtil;
 import com.panda.redis.proxy.config.ProxyProperties;
 import com.panda.redis.proxy.health.pojo.HealthReportInfo;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 
 import java.net.InetAddress;
@@ -12,7 +12,6 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 public abstract class AbstractHealthReporter implements HealthReporter {
 
     protected ProxyProperties proxyProperties;
@@ -30,7 +29,7 @@ public abstract class AbstractHealthReporter implements HealthReporter {
                 doReport(healthReportInfos);
             }
         } catch (Exception e) {
-            log.error("health report error: ", e);
+            LogUtil.error("health report error: ", e);
         }
     }
 
@@ -46,7 +45,7 @@ public abstract class AbstractHealthReporter implements HealthReporter {
                         .setRedisNode(client.getAddress())
                         .setGroupId(proxyProperties.getGroupId());
             } catch (UnknownHostException e) {
-                log.error("health reporter failed", e);
+                LogUtil.error("health reporter failed", e);
                 throw new RuntimeException(e);
             }
             try {
@@ -57,7 +56,7 @@ public abstract class AbstractHealthReporter implements HealthReporter {
                         .setHealth(true)
                         .create();
             }  catch (Exception e){
-                log.error("node ping failed", e);
+                LogUtil.error("node ping failed", e);
                 return healthReportInfoBuilder.setTimeDelay(null)
                         .setHealth(false)
                         .create();

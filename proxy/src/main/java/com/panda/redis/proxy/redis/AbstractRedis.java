@@ -4,10 +4,18 @@ import com.panda.redis.base.protocol.BulkReply;
 import com.panda.redis.base.protocol.Command;
 import com.panda.redis.base.protocol.RedisCommand;
 import com.panda.redis.proxy.config.ProxyPool;
+import com.panda.redis.proxy.event.pojo.CommandEvent;
+import com.panda.redis.proxy.event.pojo.CommandPojo;
+import com.panda.redis.proxy.health.pojo.HealthReportInfo;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Protocol;
 
-public abstract class AbstractRedis implements RedisInterface{
+import java.util.ArrayList;
+
+public abstract class AbstractRedis implements RedisInterface {
 
     protected ProxyPool proxyPool;
 
@@ -17,6 +25,7 @@ public abstract class AbstractRedis implements RedisInterface{
         try {
             if (cmd.getName().equalsIgnoreCase("set")) {
                 Object o = set(Protocol.Command.SET, cmd.getArg1(), cmd.getArg2());
+
                 return (byte[])o;
             }
             else if (cmd.getName().equalsIgnoreCase("get")) {
@@ -28,7 +37,6 @@ public abstract class AbstractRedis implements RedisInterface{
             //将内容返回到客户端
             throw new RuntimeException("sendCommand error", e);
         }
-
     }
 
     @Override

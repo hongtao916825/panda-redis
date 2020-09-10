@@ -1,10 +1,10 @@
 package com.panda.redis.core.autoconfigure;
 
+import com.panda.redis.base.common.LogUtil;
 import com.panda.redis.core.context.PandaJedisPool;
 import com.panda.redis.core.context.RedisLoadBalance;
 import com.panda.redis.core.loadBalance.ProxyLoadBalance;
 import com.panda.redis.core.properties.PandaRedisProperties;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -16,25 +16,30 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 import javax.annotation.PostConstruct;
+import java.util.logging.Logger;
 
-@Slf4j
-public class PandaConfiguration implements ApplicationContextAware {
+public class PandaConfiguration {
 
     @Autowired
     private PandaRedisProperties pandaRedisProperties;
 
     @Bean
-//    @ConditionalOnProperty(prefix = PandaRedisProperties.PANDAREDIS_PREFIX,name = "USEHA",havingValue ="false")
-    public PandaJedisPool createJedisPool() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        log.info("加载jedis连接池");
+    public JedisPoolConfig createJedisPoolConfig(){
+        LogUtil.info("加载jedis连接池配置");
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxTotal(pandaRedisProperties.getMaxTotal());
         jedisPoolConfig.setMaxIdle(pandaRedisProperties.getMaxIdel());
         jedisPoolConfig.setMinIdle(pandaRedisProperties.getMinIdel());
         jedisPoolConfig.setTestOnBorrow(pandaRedisProperties.isTestOnBorrow());
         jedisPoolConfig.setTestOnReturn(pandaRedisProperties.isTestOnRetrun());
-        PandaJedisPool jedisPool = new PandaJedisPool(jedisPoolConfig);
-        return jedisPool;
+        return jedisPoolConfig;
+    }
+
+    @Bean
+//    @ConditionalOnProperty(prefix = PandaRedisProperties.PANDAREDIS_PREFIX,name = "USEHA",havingValue ="false")
+    public JedisPool createJedisPool() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        LogUtil.info("加载jedis连接池");
+        return new PandaJedisPool();
     }
 
     @Bean
@@ -43,13 +48,13 @@ public class PandaConfiguration implements ApplicationContextAware {
         RedisLoadBalance loadBalance = new RedisLoadBalance(jedisPool);
         return loadBalance;
     }
-
-    private ApplicationContext applicationContext;
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
+//
+//    private ApplicationContext applicationContext;
+//
+//    @Override
+//    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+//        this.applicationContext = applicationContext;
+//    }
 
 
 }

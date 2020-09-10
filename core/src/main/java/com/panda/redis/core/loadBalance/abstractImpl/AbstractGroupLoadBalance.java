@@ -2,7 +2,7 @@ package com.panda.redis.core.loadBalance.abstractImpl;
 
 import com.panda.redis.core.context.ServersContext;
 import com.panda.redis.core.loadBalance.GroupLoadBalance;
-import com.panda.redis.core.properties.GroupProxy;
+import com.panda.redis.core.pojo.GroupProxy;
 
 public abstract class AbstractGroupLoadBalance implements GroupLoadBalance {
 

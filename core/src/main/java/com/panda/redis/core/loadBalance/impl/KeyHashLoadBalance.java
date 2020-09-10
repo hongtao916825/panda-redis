@@ -2,10 +2,9 @@ package com.panda.redis.core.loadBalance.impl;
 
 import com.panda.redis.core.context.ServersContext;
 import com.panda.redis.core.loadBalance.abstractImpl.AbstractGroupLoadBalance;
-import com.panda.redis.core.properties.GroupProxy;
+import com.panda.redis.core.pojo.GroupProxy;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.List;
 
 @Component

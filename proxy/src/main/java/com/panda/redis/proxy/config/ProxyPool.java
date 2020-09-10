@@ -3,19 +3,26 @@ package com.panda.redis.proxy.config;
 import com.google.common.collect.ImmutableMap;
 import com.panda.redis.base.constants.ProxyConstants;
 import com.panda.redis.base.protocol.RedisCommand;
+import com.panda.redis.proxy.event.pojo.CommandEvent;
+import com.panda.redis.proxy.event.pojo.CommandPojo;
 import com.panda.redis.proxy.redis.RedisInterface;
 import com.panda.redis.proxy.redis.impl.RedisClusterImplement;
 import com.panda.redis.proxy.redis.impl.RedisSentinelImplement;
 import com.panda.redis.proxy.redis.impl.RedisSingleImplement;
 import jdk.nashorn.internal.ir.annotations.Immutable;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import redis.clients.jedis.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProxyPool {
+public class ProxyPool implements ApplicationContextAware {
 
     private static Map<String, RedisInterface> RedisImplementMap;
+
+    private ApplicationContext applicationContext;
 
     static {
         RedisImplementMap = ImmutableMap.<String, RedisInterface>builder()
@@ -72,7 +79,14 @@ public class ProxyPool {
     }
 
     public byte[] send(RedisCommand cmd) {
-        return RedisImplementMap.get(cluster).setResource(this).send(cmd);
+        byte[] result = RedisImplementMap.get(cluster).setResource(this).send(cmd);
+        CommandPojo commandPojo = CommandPojo.createBuilder().setRedisCommand(cmd).create();
+        applicationContext.publishEvent(new CommandEvent(commandPojo));
+        return result;
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }

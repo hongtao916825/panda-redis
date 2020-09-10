@@ -1,10 +1,10 @@
 package com.panda.redis.core.context;
 
 import com.panda.redis.base.api.Client;
-import com.panda.redis.core.properties.GroupProxy;
+import com.panda.redis.core.pojo.GroupProxy;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class ServersContext {
     private static ThreadLocal<ServersContext> threadLocal = new ThreadLocal<>();
@@ -17,7 +17,7 @@ public class ServersContext {
 
     private String value;
 
-    private List<Client> Clients;
+    private Set<String> proxies;
 
     public ServersContext() {
     }
@@ -56,12 +56,12 @@ public class ServersContext {
         this.value = value;
     }
 
-    public List<Client> getClients() {
-        return Clients;
+    public Set<String> getProxies() {
+        return proxies;
     }
 
-    public void setClients(List<Client> clients) {
-        Clients = clients;
+    public void setProxies(Set<String> proxies) {
+        this.proxies = proxies;
     }
 
     public static void put(ServersContext serversContext){

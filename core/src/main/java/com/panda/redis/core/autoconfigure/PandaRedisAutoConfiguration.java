@@ -1,10 +1,9 @@
 package com.panda.redis.core.autoconfigure;
 
+import com.panda.redis.base.common.LogUtil;
 import com.panda.redis.core.address.LoadAddressListener;
 import com.panda.redis.core.address.ProxyLoaderContext;
 import com.panda.redis.core.properties.PandaRedisProperties;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -24,7 +23,6 @@ import redis.clients.jedis.JedisPoolConfig;
 @ConditionalOnClass(value = {
         Jedis.class, JedisPool.class, JedisPoolConfig.class
 })
-@Slf4j
 @Import({PandaConfiguration.class, LoadAddressListener.class})
 public class PandaRedisAutoConfiguration implements BeanDefinitionRegistryPostProcessor,EnvironmentAware{
 
@@ -39,32 +37,36 @@ public class PandaRedisAutoConfiguration implements BeanDefinitionRegistryPostPr
         this.environment = environment;
     }
 
-    @SneakyThrows
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
-        String className = environment.getProperty("panda.redis.groupLoadBalance");
-        if(StringUtils.isEmpty(className)){
-            className = DEFAULT_GROUP_LOADBALANCE;
-        }
-        RootBeanDefinition beanDefinition = new RootBeanDefinition(Class.forName(className));
-        beanDefinitionRegistry.registerBeanDefinition("groupLoadBalance", beanDefinition);
+        try {
+            String className = environment.getProperty("panda.redis.groupLoadBalance");
+            if(StringUtils.isEmpty(className)){
+                className = DEFAULT_GROUP_LOADBALANCE;
+            }
+            RootBeanDefinition beanDefinition = new RootBeanDefinition(Class.forName(className));
+            beanDefinitionRegistry.registerBeanDefinition("groupLoadBalance", beanDefinition);
 
-        String registerAddress = environment.getProperty("panda.redis.registerAddress");
-        String registerBeanName = ProxyLoaderContext.getProxyRegisterByRegisterAddress(registerAddress);
-        if(StringUtils.isEmpty(registerBeanName)){
-            registerBeanName = DEFAULT_REGISTER_BEAN;
-        }
-        beanDefinitionRegistry.registerBeanDefinition("proxyLoader", new RootBeanDefinition(Class.forName(registerBeanName)));
+            String registerAddress = environment.getProperty("panda.redis.registerAddress");
+            String registerBeanName = ProxyLoaderContext.getProxyRegisterByRegisterAddress(registerAddress);
+            if(StringUtils.isEmpty(registerBeanName)){
+                registerBeanName = DEFAULT_REGISTER_BEAN;
+            }
+            beanDefinitionRegistry.registerBeanDefinition("proxyLoader", new RootBeanDefinition(Class.forName(registerBeanName)));
 
-        String proxyLoadBalance = environment.getProperty("panda.redis.proxyLoadBalance");
-        String proxyLoadBalanceBeanName = ProxyLoaderContext.getProxyRegisterByRegisterAddress(registerAddress);
-        if(StringUtils.isEmpty(proxyLoadBalance)){
-            proxyLoadBalanceBeanName = DEFAULT_PROXY_LOADBALANCE;
+            String proxyLoadBalance = environment.getProperty("panda.redis.proxyLoadBalance");
+            String proxyLoadBalanceBeanName = ProxyLoaderContext.getProxyRegisterByRegisterAddress(registerAddress);
+            if(StringUtils.isEmpty(proxyLoadBalance)){
+                proxyLoadBalanceBeanName = DEFAULT_PROXY_LOADBALANCE;
+            }
+            RootBeanDefinition rootBeanDefinition = new RootBeanDefinition(Class.forName(proxyLoadBalanceBeanName));
+            rootBeanDefinition.setLazyInit(true);
+            rootBeanDefinition.setScope(BeanDefinition.SCOPE_PROTOTYPE);
+            beanDefinitionRegistry.registerBeanDefinition("proxyLoadBalance", rootBeanDefinition);
+        } catch (ClassNotFoundException e) {
+            LogUtil.error("load bean fail: " + e);
+            throw new RuntimeException(e);
         }
-        RootBeanDefinition rootBeanDefinition = new RootBeanDefinition(Class.forName(proxyLoadBalanceBeanName));
-        rootBeanDefinition.setLazyInit(true);
-        rootBeanDefinition.setScope(BeanDefinition.SCOPE_PROTOTYPE);
-        beanDefinitionRegistry.registerBeanDefinition("proxyLoadBalance", rootBeanDefinition);
 
     }
 

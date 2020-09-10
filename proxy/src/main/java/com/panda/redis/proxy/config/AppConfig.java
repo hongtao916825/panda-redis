@@ -1,9 +1,9 @@
 package com.panda.redis.proxy.config;
 
+import com.panda.redis.base.common.LogUtil;
 import com.panda.redis.base.constants.ProxyConstants;
 import com.panda.redis.proxy.base.NettyServer;
 import io.netty.util.internal.StringUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 })
 @Configuration
 @Import(NettyServer.class)
-@Slf4j
 public class AppConfig {
 
     @Bean
@@ -42,7 +41,7 @@ public class AppConfig {
 
     @Bean
     public ProxyPool createJedisPool(PandaRedisProperties pandaRedisProperties, ProxyProperties proxyProperties) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        log.info("加载jedis连接池");
+        LogUtil.info("加载jedis连接池");
         ProxyPool proxyPool = new ProxyPool(proxyProperties.getCluster().toUpperCase());
         switch (proxyProperties.getCluster().toUpperCase()){
             case ProxyConstants.CLUSTER_SINGLE:
@@ -55,7 +54,7 @@ public class AppConfig {
                 proxyPool.setJedisCluster(createClusterJedisPool(pandaRedisProperties, proxyProperties));
                 break;
             default:
-                throw new RuntimeException("config redis.cluster wrong,need : SINGLE,SENTINEL,CLUSTER");
+                throw new RuntimeException("config redis.cluster wrong，require : SINGLE,SENTINEL,CLUSTER");
         }
         return proxyPool;
     }
@@ -100,7 +99,7 @@ public class AppConfig {
      */
     private JedisPool createSingleJedisPool(PandaRedisProperties pandaRedisProperties, ProxyProperties proxyProperties) {
         JedisPoolConfig jedisPoolConfig = createJedisPoolConfig(pandaRedisProperties);
-        JedisPool jedisPool = new JedisPool(jedisPoolConfig, proxyProperties.getNodes().get(0).split(":")[0],Integer.valueOf(proxyProperties.getNodes().get(0).split(":")[1]), Protocol.DEFAULT_TIMEOUT, proxyProperties.getPassword());
+        JedisPool jedisPool = new JedisPool(jedisPoolConfig, proxyProperties.getNodes().get(0).split(":")[0],Integer.valueOf(proxyProperties.getNodes().get(0).split(":")[1]));
         return jedisPool;
     }
 
