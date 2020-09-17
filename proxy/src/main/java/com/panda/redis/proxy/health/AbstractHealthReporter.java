@@ -6,10 +6,12 @@ import com.panda.redis.base.common.LogUtil;
 import com.panda.redis.proxy.config.ProxyProperties;
 import com.panda.redis.proxy.health.pojo.HealthReportInfo;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StopWatch;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public abstract class AbstractHealthReporter implements HealthReporter {
@@ -48,11 +50,12 @@ public abstract class AbstractHealthReporter implements HealthReporter {
                 LogUtil.error("health reporter failed", e);
                 throw new RuntimeException(e);
             }
+            StopWatch stopWatch = null;
             try {
-                long startTime = System.currentTimeMillis();   //获取开始时间
+                stopWatch = new StopWatch("delay");
+                stopWatch.start();
                 client.ping();
-                long endTime = System.currentTimeMillis(); //获取结束时间
-                return healthReportInfoBuilder.setTimeDelay(endTime - startTime)
+                return healthReportInfoBuilder.setTimeDelay(stopWatch.getTotalTimeMillis())
                         .setHealth(true)
                         .create();
             }  catch (Exception e){
@@ -60,6 +63,12 @@ public abstract class AbstractHealthReporter implements HealthReporter {
                 return healthReportInfoBuilder.setTimeDelay(null)
                         .setHealth(false)
                         .create();
+            } finally {
+                Optional.ofNullable(stopWatch).ifPresent((s)->{
+                    if(s.isRunning()){
+                        s.stop();
+                    }
+                });
             }
         }).collect(Collectors.toList());
         return healthReportInfos;
