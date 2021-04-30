@@ -15,7 +15,7 @@
         <module>test</module>
     </modules>
     <properties>
-        <spring-framework.version>5.2.4.RELEASE</spring-framework.version>
+        <spring-framework.version>5.2.9.RELEASE</spring-framework.version>
         <lettuce.version>5.2.2.RELEASE</lettuce.version>
         <java.version>1.8</java.version>
         <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
